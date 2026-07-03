@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import PublicHeaderMenu from "@/menus/publicHeaderMenu/PublicHeaderMenu";
 import PublicFooterMenu from "@/menus/publicFooterMenu/PublicFooterMenu";
+import RootProvider from "@/contexts/RootProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,11 +34,13 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="">
-        <PublicHeaderMenu />
-        <main className="flex-1">
-          {children}
-        </main>
-        <PublicFooterMenu />
+        <RootProvider>
+          <PublicHeaderMenu />
+          <main className="flex-1">
+            {children}
+          </main>
+          <PublicFooterMenu />
+        </RootProvider>
       </body>
     </html>
   );
