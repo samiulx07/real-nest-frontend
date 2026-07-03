@@ -142,7 +142,7 @@ export default function PublicHeaderMenu() {
               href="/list-property"
               className={`hidden md:flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white no-underline rounded-lg cursor-pointer whitespace-nowrap shrink-0 transition-all duration-200 hover:-translate-y-0.5 ${styles.ctaButton}`}
             >
-              List Your Property
+              View All Property
             </Link>
 
             {/* Burger button */}
@@ -257,7 +257,7 @@ export default function PublicHeaderMenu() {
             onClick={() => setMobileOpen(false)}
             className={`flex items-center justify-center w-full py-3 text-sm font-semibold text-white no-underline rounded-lg ${styles.ctaButton}`}
           >
-            List Your Property
+            View All Property
           </Link>
         </div>
       </div>
