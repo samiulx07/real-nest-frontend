@@ -4,6 +4,7 @@ import "../globals.css";
 import PublicHeaderMenu from "@/menus/publicHeaderMenu/PublicHeaderMenu";
 import PublicFooterMenu from "@/menus/publicFooterMenu/PublicFooterMenu";
 import RootProvider from "@/contexts/RootProvider";
+import AuthInit from "@/components/authInit/AuthInit";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({
     >
       <body className="">
         <RootProvider>
+          <AuthInit />
           <PublicHeaderMenu />
           <main className="flex-1">
             {children}

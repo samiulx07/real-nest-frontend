@@ -1,4 +1,4 @@
-export const setUser = (user: null) => {
+export const setUser = (user: any) => {
     localStorage.setItem("real-nset", JSON.stringify(user));
 };
 

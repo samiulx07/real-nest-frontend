@@ -9,10 +9,16 @@ import Logo from "@/components/logo/Logo";
 import Button from "@/components/button/Button";
 import { BUTTON_VARIANT_ENUM, BUTTON_SIZE_ENUM } from "@/shared/enums";
 import { loginSchema, LoginInput } from "@/shared/validations/auth.validation";
+import { useRootContext } from "@/contexts/RootContext";
+import api from "@/services/baseServices";
+import { setUser } from "@/services/tokenService";
 
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [apiSuccess, setApiSuccess] = useState<string | null>(null);
+  const { setUser: setUserContext, setAccessToken } = useRootContext();
 
   const {
     register,
@@ -27,17 +33,57 @@ const LoginForm: React.FC = () => {
     },
   });
 
-  const onLoginSubmit = (data: LoginInput) => {
+  const onLoginSubmit = async (data: LoginInput) => {
     setLoading(true);
-    console.log("Login form data:", data);
-    setTimeout(() => {
+    setApiError(null);
+    setApiSuccess(null);
+    try {
+      const response = await api.post("/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
+
+      const resData = response.data;
+
+      if (resData?.success && resData?.data) {
+        const { user: loggedInUser, accessToken: token } = resData.data;
+
+        // Persist token in localStorage
+        setUser({
+          user: loggedInUser,
+          accessToken: token,
+        });
+
+        // Set context values
+        setUserContext(loggedInUser);
+        setAccessToken(token);
+
+        setApiSuccess("Logged in successfully! Redirecting...");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
+      } else {
+        setApiError(resData?.message || "Login failed");
+      }
+    } catch (error: any) {
+      setApiError(error.response?.data?.message || "Invalid credentials or server error");
+    } finally {
       setLoading(false);
-      alert(`Login simulated for: ${data.email}`);
-    }, 1500);
+    }
   };
 
   return (
-    <div className="bg-white rounded-[24px] p-6 sm:p-9 w-full max-w-[580px] border border-[#f0f0f0] shadow-[0_10px_40px_rgba(0,6,42,0.03)]">
+    <div className="bg-white rounded-[24px] p-6 sm:p-9 w-full max-w-[580px] border border-[#f0f0f0] shadow-[0_10px_40px_rgba(0,6,42,0.03)] flex flex-col gap-5">
+      {apiError && (
+        <div className="p-3.5 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl font-medium text-left">
+          {apiError}
+        </div>
+      )}
+      {apiSuccess && (
+        <div className="p-3.5 bg-green-50 border border-green-100 text-green-600 text-sm rounded-xl font-medium text-left">
+          {apiSuccess}
+        </div>
+      )}
       {/* Header section */}
       <div className="flex flex-col items-center mb-5">
         <Logo width={160} height={42} className="mb-3" />

@@ -12,39 +12,50 @@ const instance = axios.create({
         Accept: "application/json",
         "Content-Type": "application/json",
     },
+    withCredentials: true, // Send and receive cookies (like refreshToken)
 });
 
-// Response interceptor — refresh token on 403
+// Request interceptor to attach bearer token
+instance.interceptors.request.use(
+    (config) => {
+        const authData = getUser();
+        if (authData?.accessToken) {
+            config.headers.Authorization = `Bearer ${authData.accessToken}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+// Response interceptor — refresh token on 401 Unauthorized
 instance.interceptors.response.use(
     (response) => response,
     async (error) => {
-        const user = getUser();
+        const authData = getUser();
         const originalConfig = error.config;
 
-        if (error.response?.status === 403 && !originalConfig._retry) {
+        if (error.response?.status === 401 && !originalConfig._retry) {
             originalConfig._retry = true;
 
             try {
-                const res = await instance.post("/refresh-token", {
-                    refreshToken: user?.refreshToken,
-                });
+                // Call backend refresh route which reads the httpOnly cookie
+                const res = await instance.post("/auth/refresh");
 
-                const { id_token, refresh_token } = res.data;
+                if (res.data?.success) {
+                    const { accessToken } = res.data.data;
 
-                if (user) {
-                    setUser({
-                        ...user,
-                        refreshToken: refresh_token,
-                        idToken: id_token,
-                    });
-                }
+                    if (authData) {
+                        setUser({
+                            ...authData,
+                            accessToken,
+                        });
+                    }
 
-                if (res.status === 200) {
-                    originalConfig.headers.Authorization = `Bearer ${id_token}`;
-                    return axios(originalConfig);
+                    originalConfig.headers.Authorization = `Bearer ${accessToken}`;
+                    return instance(originalConfig); // retry request with new token
                 }
             } catch (refreshError) {
-                if (user) {
+                if (authData) {
                     setUser(null);
                     window.location.reload();
                 }

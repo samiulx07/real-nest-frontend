@@ -9,11 +9,14 @@ import Logo from "@/components/logo/Logo";
 import Button from "@/components/button/Button";
 import { BUTTON_VARIANT_ENUM, BUTTON_SIZE_ENUM } from "@/shared/enums";
 import { signupSchema, SignupInput } from "@/shared/validations/auth.validation";
+import api from "@/services/baseServices";
 
 const SignupForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [apiSuccess, setApiSuccess] = useState<string | null>(null);
 
   const {
     register,
@@ -30,17 +33,47 @@ const SignupForm: React.FC = () => {
     },
   });
 
-  const onSignupSubmit = (data: SignupInput) => {
+  const onSignupSubmit = async (data: SignupInput) => {
     setLoading(true);
-    console.log("Signup form data:", data);
-    setTimeout(() => {
+    setApiError(null);
+    setApiSuccess(null);
+    try {
+      const response = await api.post("/auth/register", {
+        fullName: data.fullName,
+        email: data.email,
+        password: data.password,
+        phone: data.phone || null,
+      });
+
+      const resData = response.data;
+
+      if (resData?.success) {
+        setApiSuccess("Account created successfully! Redirecting to login...");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1500);
+      } else {
+        setApiError(resData?.message || "Registration failed");
+      }
+    } catch (error: any) {
+      setApiError(error.response?.data?.message || "Registration failed");
+    } finally {
       setLoading(false);
-      alert(`Signup simulated for: ${data.email}`);
-    }, 1500);
+    }
   };
 
   return (
-    <div className="bg-white rounded-[24px] p-6 sm:p-9 w-full max-w-[580px] border border-[#f0f0f0] shadow-[0_10px_40px_rgba(0,6,42,0.03)]">
+    <div className="bg-white rounded-[24px] p-6 sm:p-9 w-full max-w-[580px] border border-[#f0f0f0] shadow-[0_10px_40px_rgba(0,6,42,0.03)] flex flex-col gap-5">
+      {apiError && (
+        <div className="p-3.5 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl font-medium text-left">
+          {apiError}
+        </div>
+      )}
+      {apiSuccess && (
+        <div className="p-3.5 bg-green-50 border border-green-100 text-green-600 text-sm rounded-xl font-medium text-left">
+          {apiSuccess}
+        </div>
+      )}
       {/* Header section */}
       <div className="flex flex-col items-center mb-5">
         <Logo width={160} height={42} className="mb-3" />
