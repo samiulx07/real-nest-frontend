@@ -5,14 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import styles from "./publicHeaderMenu.module.css";
-import { FiCalendar, FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX } from "react-icons/fi";
 
 const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Properties", href: "/properties" },
-  { label: "Flats", href: "/flats" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact Us", href: "/contact" },
+  { label: "Buy", href: "/buy" },
+  { label: "Rent", href: "/rent" },
+  { label: "Projects", href: "/projects" },
+  { label: "Services", href: "/services" },
+  { label: "About Us", href: "/about" },
 ];
 
 export default function PublicHeaderMenu() {
@@ -73,11 +73,10 @@ export default function PublicHeaderMenu() {
           {/* Desktop CTA + Mobile Burger */}
           <div className="flex items-center gap-3">
             <Link
-              href="/book"
-              className={`hidden md:flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white no-underline rounded-lg cursor-pointer whitespace-nowrap shrink-0 transition-all duration-200 hover:-translate-y-0.5 ${styles.ctaButton}`}
+              href="/list-property"
+              className={`hidden md:flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white no-underline rounded-lg cursor-pointer whitespace-nowrap shrink-0 transition-all duration-200 hover:-translate-y-0.5 ${styles.ctaButton}`}
             >
-              <FiCalendar className="text-[15px]" />
-              Book Your Flat Now
+              List Your Property
             </Link>
 
             {/* Burger button */}
@@ -144,12 +143,11 @@ export default function PublicHeaderMenu() {
 
         <div className="px-4 mt-2">
           <Link
-            href="/book"
+            href="/list-property"
             onClick={() => setMobileOpen(false)}
-            className={`flex items-center justify-center gap-2 w-full py-3 text-sm font-semibold text-white no-underline rounded-lg ${styles.ctaButton}`}
+            className={`flex items-center justify-center w-full py-3 text-sm font-semibold text-white no-underline rounded-lg ${styles.ctaButton}`}
           >
-            <FiCalendar className="text-[15px]" />
-            Book Your Flat Now
+            List Your Property
           </Link>
         </div>
       </div>
