@@ -10,6 +10,7 @@ export type RootContextValue = {
     setAccessToken: Dispatch<SetStateAction<string | null>>;
     authLoading: boolean;
     setAuthLoading: Dispatch<SetStateAction<boolean>>;
+    logout: () => void;
 };
 
 export const RootContext = createContext<RootContextValue | undefined>(undefined);
