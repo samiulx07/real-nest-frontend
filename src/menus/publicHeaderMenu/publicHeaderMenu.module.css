@@ -1,0 +1,67 @@
+/* ─── Header: scroll transition ─── */
+.header {
+  position: fixed;
+  top: 12px;
+  left: 20px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 1436px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    right 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header.scrolled {
+  top: 0;
+  left: 0;
+  right: 0;
+  max-width: 100%;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ─── CTA gradient button ─── */
+.ctaButton {
+  background: linear-gradient(135deg, var(--primary), #e54400);
+}
+
+.ctaButton:hover {
+  box-shadow: 0 4px 14px rgba(255, 76, 0, 0.35);
+}
+
+/* ─── Mobile drawer slide-in ─── */
+.mobileDrawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 300px;
+  max-width: 85vw;
+  z-index: 1001;
+  background: #ffffff;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobileDrawerOpen {
+  transform: translateX(0);
+}
+
+@media (min-width: 768px) {
+  .mobileDrawer {
+    display: none;
+  }
+}
