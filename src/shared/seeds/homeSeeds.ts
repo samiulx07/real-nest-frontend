@@ -1,3 +1,27 @@
+export interface BannerSlide {
+  id: number;
+  image: string;
+  title: string;
+  subtitle: string;
+  projectName: string;
+  location: string;
+  price: string;
+  totalFloor: string;
+  units: string;
+  parking: string;
+  gym: string;
+}
+
+export interface FeaturedProject {
+  id: number;
+  image: string;
+  projectName: string;
+  location: string;
+  totalFloor: string;
+  unitsPerFloor: string;
+  size: string;
+}
+
 export const HOME_SEED_OBJ = {
   bannerSlides: [
     {
@@ -56,5 +80,44 @@ export const HOME_SEED_OBJ = {
       parking: "Yes",
       gym: "Yes",
     },
-  ],
+  ] as BannerSlide[],
+
+  featuredProjects: [
+    {
+      id: 1,
+      image: "/building-01.png",
+      projectName: "Urban Heights",
+      location: "Gulshan-2, Dhaka",
+      totalFloor: "G+10",
+      unitsPerFloor: "2",
+      size: "1,650 Sft",
+    },
+    {
+      id: 2,
+      image: "/building-02.png",
+      projectName: "Elegance Tower",
+      location: "Dhanmondi, Dhaka",
+      totalFloor: "G+12",
+      unitsPerFloor: "2",
+      size: "1,850 Sft",
+    },
+    {
+      id: 3,
+      image: "/building-03.png",
+      projectName: "Prestige Manor",
+      location: "Banani, Dhaka",
+      totalFloor: "G+14",
+      unitsPerFloor: "2",
+      size: "2,100 Sft",
+    },
+    {
+      id: 4,
+      image: "/building-04.png",
+      projectName: "Serene Oasis",
+      location: "Uttara, Dhaka",
+      totalFloor: "G+9",
+      unitsPerFloor: "2",
+      size: "1,450 Sft",
+    },
+  ] as FeaturedProject[],
 };

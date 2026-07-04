@@ -38,7 +38,7 @@ const Button: React.FC<ButtonProps> = ({
     [BUTTON_VARIANT_ENUM.TERTIARY]:
       "bg-transparent text-secondary border-transparent hover:bg-gray-100 focus:ring-gray-200",
     [BUTTON_VARIANT_ENUM.TERTIARY_PRIMARY]:
-      "bg-transparent text-primary border-transparent hover:bg-primary/5 focus:ring-primary/20",
+      "bg-transparent text-primary border-transparent hover:bg-primary/5 ring-2 ring-primary/20",
     [BUTTON_VARIANT_ENUM.TERTIARY_WHITE]:
       "bg-transparent text-white border-transparent hover:bg-white/10 focus:ring-white/20",
   };
