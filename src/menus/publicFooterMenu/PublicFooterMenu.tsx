@@ -4,10 +4,10 @@ import { FiFacebook, FiInstagram, FiLinkedin, FiMapPin, FiPhone, FiMail } from "
 
 const quickLinks = [
   { label: "Home", href: "/" },
-  { label: "Projects", href: "/properties" },
+  { label: "Projects", href: "/projects" },
   { label: "Flats", href: "/flats" },
-  { label: "About Us", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "About Us", href: "/about-us" },
+  { label: "Contact Us", href: "/contact-us" }
 ];
 
 const customerCare = [
