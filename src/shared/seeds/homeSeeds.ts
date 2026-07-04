@@ -1,0 +1,60 @@
+export const HOME_SEED_OBJ = {
+  bannerSlides: [
+    {
+      id: 1,
+      image: "/banner-1.png",
+      title: "Book Your\nDream Apartment\nin Trusted Projects",
+      subtitle:
+        "Modern living spaces in prime locations.\nDesigned for comfort, built for life.",
+      projectName: "Urban Heights",
+      location: "Gulshan-2, Dhaka",
+      price: "৳ 1,85,00,000",
+      totalFloor: "G+10",
+      units: "2",
+      parking: "Yes",
+      gym: "Yes",
+    },
+    {
+      id: 2,
+      image: "/banner-2.png",
+      title: "Luxury Living\nRedefined for\nModern Families",
+      subtitle:
+        "Spacious apartments with world-class amenities.\nYour perfect home awaits.",
+      projectName: "Elegance Tower",
+      location: "Dhanmondi, Dhaka",
+      price: "৳ 2,45,00,000",
+      totalFloor: "G+12",
+      units: "2",
+      parking: "Yes",
+      gym: "Yes",
+    },
+    {
+      id: 3,
+      image: "/banner-3.png",
+      title: "Invest in\nPremium Real Estate\nwith Confidence",
+      subtitle:
+        "Transparent dealings and trusted developers.\nSecure your future today.",
+      projectName: "Prestige Manor",
+      location: "Banani, Dhaka",
+      price: "৳ 3,10,00,000",
+      totalFloor: "G+14",
+      units: "2",
+      parking: "Yes",
+      gym: "Yes",
+    },
+    {
+      id: 4,
+      image: "/banner-4.png",
+      title: "Find Your\nIdeal Home in\nPrime Locations",
+      subtitle:
+        "Hand-picked properties in the best neighborhoods.\nQuality you can trust.",
+      projectName: "Serene Oasis",
+      location: "Uttara, Dhaka",
+      price: "৳ 1,50,00,000",
+      totalFloor: "G+9",
+      units: "2",
+      parking: "Yes",
+      gym: "Yes",
+    },
+  ],
+};

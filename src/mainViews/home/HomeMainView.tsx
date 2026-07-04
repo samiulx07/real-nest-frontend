@@ -1,11 +1,10 @@
-import React from 'react';
-
-// import { Container } from './styles';
+import HomeBanner from '@/components/homeBanner/HomeBanner';
+import { HOME_SEED_OBJ } from '@/shared/seeds/homeSeeds';
 
 const HomeMainView = () => {
     return (
         <div>
-            <h1 className='text-2xl'>Real Nest</h1>
+            <HomeBanner slides={HOME_SEED_OBJ.bannerSlides} />
         </div>
     )
 };

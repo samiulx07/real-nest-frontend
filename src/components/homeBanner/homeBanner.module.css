@@ -1,2 +1,78 @@
-.bannerWrapper {
+/* ─── Secondary-color overlay: 80% → 0% left-to-right + bottom fade ─── */
+.slideOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to right,
+      var(--secondary, #00062A) 0%,
+      rgba(0, 6, 42, 0.8) 15%,
+      rgba(0, 6, 42, 0.55) 40%,
+      rgba(0, 6, 42, 0.2) 65%,
+      transparent 85%
+    ),
+    linear-gradient(
+      to top,
+      rgba(0, 6, 42, 0.75) 0%,
+      rgba(0, 6, 42, 0.35) 25%,
+      transparent 50%
+    );
+  z-index: 1;
+}
+
+/* ─── Fade-slide-up entrance animation ─── */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animateTitle {
+  opacity: 0;
+  animation: fadeSlideUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animateSubtitle {
+  opacity: 0;
+  animation: fadeSlideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
+}
+
+.animateCta {
+  opacity: 0;
+  animation: fadeSlideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.24s forwards;
+}
+
+/* ─── Active thumbnail glow ring ─── */
+.thumbnailActive {
+  border-color: var(--primary) !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 0 1px rgba(255, 76, 0, 0.3), 0 4px 16px rgba(255, 76, 0, 0.2);
+}
+
+/* ─── Arrow buttons — solid, visible ─── */
+.arrowBtn {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.arrowBtn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+/* ─── CTA primary hover glow ─── */
+.ctaPrimary:hover {
+  box-shadow: 0 8px 28px rgba(255, 76, 0, 0.35);
+}
+
+/* ─── Card entrance animation ─── */
+.animateCard {
+  opacity: 0;
+  animation: fadeSlideUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
 }
