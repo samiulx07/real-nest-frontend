@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import classnames from "classnames";
-import { FiTarget } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 import useEmblaCarousel from "embla-carousel-react";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { useCallback, useEffect, useState } from "react";
@@ -139,23 +139,24 @@ const HomeBanner = ({ slides }: HomeBannerProps) => {
               >
                 <button
                   className={classnames(
-                    "inline-flex items-center gap-2 px-7 py-3.5 text-[0.9rem] font-bold text-white bg-primary border-none rounded-lg cursor-pointer",
-                    "transition-all duration-250 hover:bg-[#e04400] hover:-translate-y-0.5 active:translate-y-0",
+                    "inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[0.9rem] font-bold text-white bg-primary border-none rounded-lg cursor-pointer group leading-none",
+                    "transition-all duration-255 hover:bg-[#e04400] hover:-translate-y-0.5 active:translate-y-0",
                     "max-sm:px-5 max-sm:py-3 max-sm:text-[0.82rem]",
                     styles.ctaPrimary
                   )}
                 >
-                  View Details
+                  <span>View Details</span>
+                  <IoChevronForward className="text-base transition-transform duration-200 group-hover:translate-x-0.5" />
                 </button>
                 <button
                   className={classnames(
-                    "inline-flex items-center gap-2 px-6 py-3 text-[0.9rem] font-bold text-secondary bg-white border-none rounded-lg cursor-pointer",
+                    "inline-flex items-center justify-center gap-2 px-6 py-3 text-[0.9rem] font-bold text-secondary bg-white border-none rounded-lg cursor-pointer leading-none",
                     "transition-all duration-200 hover:bg-white/90 hover:-translate-y-0.5 active:translate-y-0 hover:shadow-lg",
                     "max-sm:px-5 max-sm:py-2.5 max-sm:text-[0.82rem]"
                   )}
                 >
-                  <FiTarget className="text-base" />
-                  Book Flat
+                  <FiCalendar className="text-base text-secondary" />
+                  <span>Book Flat</span>
                 </button>
               </div>
 
