@@ -1,4 +1,4 @@
-import { BannerSlide, FeaturedProject, Differentiator } from "@/shared/interface";
+import { BannerSlide, FeaturedProject, Differentiator, MapProject } from "@/shared/interface";
 
 export const HOME_SEED_OBJ = {
   bannerSlides: [
@@ -125,4 +125,63 @@ export const HOME_SEED_OBJ = {
       iconName: "design",
     },
   ] as Differentiator[],
+
+  mapProjects: [
+    {
+      id: 1,
+      projectName: "Urban Heights",
+      locationName: "Gulshan-2, Dhaka",
+      lat: 23.7925,
+      lng: 90.4178,
+    },
+    {
+      id: 2,
+      projectName: "Elegance Tower",
+      locationName: "Dhanmondi, Dhaka",
+      lat: 23.7461,
+      lng: 90.3742,
+    },
+    {
+      id: 3,
+      projectName: "Prestige Manor",
+      locationName: "Banani, Dhaka",
+      lat: 23.7937,
+      lng: 90.4066,
+    },
+    {
+      id: 4,
+      projectName: "Serene Oasis",
+      locationName: "Uttara, Dhaka",
+      lat: 23.8759,
+      lng: 90.3795,
+    },
+    {
+      id: 5,
+      projectName: "Bashundhara Haven",
+      locationName: "Bashundhara R/A, Dhaka",
+      lat: 23.8188,
+      lng: 90.4312,
+    },
+    {
+      id: 6,
+      projectName: "Baily Square",
+      locationName: "Baily Road, Dhaka",
+      lat: 23.7405,
+      lng: 90.4005,
+    },
+    {
+      id: 7,
+      projectName: "Mirpur Vista",
+      locationName: "Mirpur-10, Dhaka",
+      lat: 23.8069,
+      lng: 90.3687,
+    },
+    {
+      id: 8,
+      projectName: "Mohakhali Heights",
+      locationName: "Mohakhali DOHS, Dhaka",
+      lat: 23.7802,
+      lng: 90.3950,
+    },
+  ] as MapProject[],
 };

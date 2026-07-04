@@ -44,3 +44,11 @@ export interface Differentiator {
   description: string;
   iconName: string;
 }
+
+export interface MapProject {
+  id: number;
+  projectName: string;
+  locationName: string;
+  lat: number;
+  lng: number;
+}
