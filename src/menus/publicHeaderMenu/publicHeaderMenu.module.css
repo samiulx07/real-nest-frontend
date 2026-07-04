@@ -1,7 +1,7 @@
 /* ─── Header: scroll transition ─── */
 .header {
   position: fixed;
-  top: 12px;
+  top: 20px;
   left: 20px;
   right: 20px;
   z-index: 1000;
