@@ -9,11 +9,11 @@ import { FiMenu, FiX, FiChevronDown, FiUser, FiLogOut } from "react-icons/fi";
 import { useRootContext } from "@/contexts/RootContext";
 
 const navLinks = [
-  { label: "Buy", href: "/buy" },
-  { label: "Rent", href: "/rent" },
+  { label: "Home", href: "/" },
   { label: "Projects", href: "/projects" },
-  { label: "Services", href: "/services" },
-  { label: "About Us", href: "/about" },
+  { label: "Flats", href: "/flats" },
+  { label: "About Us", href: "/about-us" },
+  { label: "Contact Us", href: "/contact-us" },
 ];
 
 export default function PublicHeaderMenu() {
