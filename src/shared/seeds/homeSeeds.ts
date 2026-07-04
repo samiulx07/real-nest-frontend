@@ -1,4 +1,4 @@
-import { BannerSlide, FeaturedProject, Differentiator, MapProject } from "@/shared/interface";
+import { BannerSlide, FeaturedProject, Differentiator, MapProject, FeaturedFlat } from "@/shared/interface";
 
 export const HOME_SEED_OBJ = {
   bannerSlides: [
@@ -184,4 +184,51 @@ export const HOME_SEED_OBJ = {
       lng: 90.3950,
     },
   ] as MapProject[],
+
+  featuredFlats: [
+    {
+      id: 1,
+      image: "/flat-1.png",
+      tag: "Swapno Neer",
+      title: "SN-1A - Premium Flat",
+      location: "Gulshan-2, Dhaka",
+      beds: 3,
+      baths: 3,
+      size: "1650 Sqft",
+      price: "৳ 1,85,00,000",
+    },
+    {
+      id: 2,
+      image: "/flat-2.png",
+      tag: "Shonali Kunj",
+      title: "SK-1B - Comfort Flat",
+      location: "Banani, Dhaka",
+      beds: 2,
+      baths: 2,
+      size: "1200 Sqft",
+      price: "৳ 1,25,00,000",
+    },
+    {
+      id: 3,
+      image: "/flat-3.png",
+      tag: "Nilima Tower",
+      title: "NT-2A - Luxury Flat",
+      location: "Dhanmondi, Dhaka",
+      beds: 3,
+      baths: 3,
+      size: "1550 Sqft",
+      price: "৳ 1,75,00,000",
+    },
+    {
+      id: 4,
+      image: "/flat-4.png",
+      tag: "Meghna Niloy",
+      title: "MN-3B - Exclusive Flat",
+      location: "Bashundhara R/A, Dhaka",
+      beds: 4,
+      baths: 4,
+      size: "2200 Sqft",
+      price: "৳ 2,60,00,000",
+    },
+  ] as FeaturedFlat[],
 };

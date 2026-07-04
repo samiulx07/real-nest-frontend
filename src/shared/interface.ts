@@ -52,3 +52,15 @@ export interface MapProject {
   lat: number;
   lng: number;
 }
+
+export interface FeaturedFlat {
+  id: number;
+  image: string;
+  tag: string;
+  title: string;
+  location: string;
+  beds: number;
+  baths: number;
+  size: string;
+  price: string;
+}

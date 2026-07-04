@@ -8,7 +8,7 @@ interface FeaturedProjectsProps {
 
 const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ projects }) => {
   return (
-    <section className="section bg-[#fafbfc]">
+    <section className="section bg-white">
       <div className="container">
         {/* Section Header */}
         <div className="text-center max-w-[580px] mx-auto mb-14">
