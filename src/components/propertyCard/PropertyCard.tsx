@@ -3,7 +3,7 @@ import Image from "next/image";
 import { IoChevronForward } from "react-icons/io5";
 import { HiOutlineLocationMarker as LocationIcon } from "react-icons/hi";
 
-import { FeaturedProject } from "@/shared/seeds/homeSeeds";
+import { FeaturedProject } from "@/shared/interface";
 import { BUTTON_VARIANT_ENUM } from "@/shared/enums";
 import Button from "../button/Button";
 

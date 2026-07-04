@@ -1,7 +1,7 @@
 import React from "react";
-import { Differentiator } from "@/shared/seeds/homeSeeds";
-import { FaMedal, FaHandshake, FaDraftingCompass } from "react-icons/fa";
 import { HiShieldCheck } from "react-icons/hi";
+import { Differentiator } from "@/shared/interface";
+import { FaMedal, FaHandshake, FaDraftingCompass } from "react-icons/fa";
 
 interface WhyChooseUsProps {
   items: Differentiator[];

@@ -1,6 +1,6 @@
 import React from "react";
 import { PropertyCard } from "../propertyCard/PropertyCard";
-import { FeaturedProject } from "@/shared/seeds/homeSeeds";
+import { FeaturedProject } from "@/shared/interface";
 
 interface FeaturedProjectsProps {
   projects: FeaturedProject[];

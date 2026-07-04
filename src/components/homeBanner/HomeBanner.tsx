@@ -11,19 +11,7 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { MdLayers, MdOutlineGridOn, MdOutlineLocalParking, MdOutlineFitnessCenter,} from "react-icons/md";
 import styles from "./homeBanner.module.css";
 
-export interface BannerSlide {
-  id: number;
-  image: string;
-  title: string;
-  subtitle: string;
-  projectName: string;
-  location: string;
-  price: string;
-  totalFloor: string;
-  units: string;
-  parking: string;
-  gym: string;
-}
+import { BannerSlide } from "@/shared/interface";
 
 interface HomeBannerProps {
   slides: BannerSlide[];
