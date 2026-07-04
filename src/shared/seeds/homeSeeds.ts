@@ -1,4 +1,4 @@
-import { BannerSlide, FeaturedProject, Differentiator, MapProject, FeaturedFlat } from "@/shared/interface";
+import { BannerSlide, FeaturedProject, Differentiator, MapProject, FeaturedFlat, FaqItem } from "@/shared/interface";
 
 export const HOME_SEED_OBJ = {
   bannerSlides: [
@@ -231,4 +231,32 @@ export const HOME_SEED_OBJ = {
       price: "৳ 2,60,00,000",
     },
   ] as FeaturedFlat[],
+
+  faqs: [
+    {
+      id: 1,
+      question: "How can I book a flat through the client portal?",
+      answer: "You can view available developer units, click 'Book Now', and submit your reservation details. Our sales relationship team will instantly receive your query and guide you through the official allocation process and down payment steps.",
+    },
+    {
+      id: 2,
+      question: "What are the payment plans and schedules available?",
+      answer: "We offer flexible, milestone-based installment structures linked directly to the construction phases of the project, as well as one-time upfront payments with attractive cash discounts. Customized schedules are tracked inside your dashboard.",
+    },
+    {
+      id: 3,
+      question: "Are the flats and land holdings fully RAJUK approved?",
+      answer: "Yes, all real estate projects in our portfolio are 100% compliant and fully cleared by RAJUK (Rajdhani Unnayan Kartripakkha). Legal blueprints, land registration clearances, and mutation deeds can be reviewed directly upon scheduling an appointment.",
+    },
+    {
+      id: 4,
+      question: "Can I schedule a physical site visit of the projects?",
+      answer: "Absolutely. You can request a guided tour at any time. Simply check our project locations, contact our helpdesk, and one of our client directors will arrange private transport and accompany you to inspect the building quality and current site development.",
+    },
+    {
+      id: 5,
+      question: "Is parking slot allocation included in the pricing?",
+      answer: "Parking configurations are allocated based on flat sizes and available basements. Details regarding specific numbers, layout clearances, and booking fees for parking slots will be discussed at selection and appended to the final deed agreement.",
+    },
+  ] as FaqItem[],
 };

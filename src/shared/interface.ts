@@ -64,3 +64,9 @@ export interface FeaturedFlat {
   size: string;
   price: string;
 }
+
+export interface FaqItem {
+  id: number;
+  question: string;
+  answer: string;
+}

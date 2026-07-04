@@ -163,7 +163,7 @@ const ProjectLocations: React.FC<ProjectLocationsProps> = ({ projects }) => {
         </div>
 
         {/* Map container wrapper */}
-        <div className="relative w-full h-[480px] rounded-[24px] overflow-hidden shadow-[0_12px_45px_rgba(0,0,0,0.06)] border border-gray-150/80 bg-gray-50">
+        <div className="relative w-full h-[480px] rounded-[24px] overflow-hidden shadow-[0_12px_45px_rgba(0,0,0,0.06)] border border-gray-200/80 bg-gray-50">
           <div ref={mapContainerRef} className="w-full h-full z-10" />
         </div>
       </div>
