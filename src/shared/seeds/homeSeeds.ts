@@ -22,6 +22,13 @@ export interface FeaturedProject {
   size: string;
 }
 
+export interface Differentiator {
+  id: number;
+  title: string;
+  description: string;
+  iconName: string;
+}
+
 export const HOME_SEED_OBJ = {
   bannerSlides: [
     {
@@ -120,4 +127,31 @@ export const HOME_SEED_OBJ = {
       size: "1,450 Sft",
     },
   ] as FeaturedProject[],
+
+  differentiators: [
+    {
+      id: 1,
+      title: "EXPERIENCE",
+      description: "With more than 50 years of expertise in construction and real estate, we bring proven knowledge and reliability to every project.",
+      iconName: "experience",
+    },
+    {
+      id: 3,
+      title: "TRUST",
+      description: "We have successfully delivered over 10,000 units across more than 1,200 projects, earning the confidence of countless customers.",
+      iconName: "trust",
+    },
+    {
+      id: 4,
+      title: "QUALITY",
+      description: "We maintain strict standards in every stage of development, ensuring lasting quality, safety, and refined finishing.",
+      iconName: "quality",
+    },
+    {
+      id: 5,
+      title: "DESIGN",
+      description: "We believe great design is not only about appearance, but also comfort, functionality, and long-term value.",
+      iconName: "design",
+    },
+  ] as Differentiator[],
 };
