@@ -2,7 +2,7 @@ export const HOME_SEED_OBJ = {
   bannerSlides: [
     {
       id: 1,
-      image: "/banner-1.png",
+      image: "/banner-6.png",
       title: "Book Your\nDream Apartment\nin Trusted Projects",
       subtitle:
         "Modern living spaces in prime locations.\nDesigned for comfort, built for life.",
@@ -16,7 +16,7 @@ export const HOME_SEED_OBJ = {
     },
     {
       id: 2,
-      image: "/banner-2.png",
+      image: "/banner-5.png",
       title: "Luxury Living\nRedefined for\nModern Families",
       subtitle:
         "Spacious apartments with world-class amenities.\nYour perfect home awaits.",
@@ -44,7 +44,7 @@ export const HOME_SEED_OBJ = {
     },
     {
       id: 4,
-      image: "/banner-4.png",
+      image: "/banner-7.png",
       title: "Find Your\nIdeal Home in\nPrime Locations",
       subtitle:
         "Hand-picked properties in the best neighborhoods.\nQuality you can trust.",

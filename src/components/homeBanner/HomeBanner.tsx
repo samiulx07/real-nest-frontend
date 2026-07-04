@@ -157,7 +157,7 @@ const HomeBanner = ({ slides }: HomeBannerProps) => {
                     styles.ctaPrimary
                   )}
                 >
-                  Explore Projects
+                  View Details
                 </button>
                 <button
                   className={classnames(
@@ -167,7 +167,7 @@ const HomeBanner = ({ slides }: HomeBannerProps) => {
                   )}
                 >
                   <FiTarget className="text-base" />
-                  How It Works
+                  Book Flat
                 </button>
               </div>
 
