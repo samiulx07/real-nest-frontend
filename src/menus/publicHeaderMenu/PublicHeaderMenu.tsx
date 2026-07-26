@@ -5,7 +5,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import styles from "./publicHeaderMenu.module.css";
-import { FiMenu, FiX, FiChevronDown, FiUser, FiLogOut } from "react-icons/fi";
+import {
+  FiMenu,
+  FiX,
+  FiChevronDown,
+  FiUser,
+  FiLogOut,
+  FiGrid,
+  FiBookmark,
+  FiFileText,
+  FiCreditCard,
+  FiHelpCircle,
+  FiHome,
+} from "react-icons/fi";
 import { useRootContext } from "@/contexts/RootContext";
 
 const navLinks = [
@@ -23,6 +35,11 @@ export default function PublicHeaderMenu() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, logout } = useRootContext();
 
+  const isAdminOrStaff =
+    user?.role === "SUPER_ADMIN" ||
+    user?.role === "ADMIN" ||
+    user?.role === "STAFF";
+
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
@@ -35,7 +52,9 @@ export default function PublicHeaderMenu() {
   // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   // Click outside to close desktop user dropdown
@@ -50,7 +69,6 @@ export default function PublicHeaderMenu() {
     <>
       <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
         <nav className="flex items-center justify-between px-4 h-16 max-w-[1436px] mx-auto">
-
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 no-underline shrink-0">
             <Image
@@ -72,7 +90,7 @@ export default function PublicHeaderMenu() {
                 <Link
                   href={link.href}
                   className={`px-4 py-2 text-[14.5px] font-medium no-underline rounded-lg transition-colors duration-200 hover:text-primary hover:bg-primary/5 ${
-                    isActive(link.href) ? "text-primary" : "text-secondary"
+                    isActive(link.href) ? "text-primary font-bold" : "text-secondary"
                   }`}
                 >
                   {link.label}
@@ -83,7 +101,6 @@ export default function PublicHeaderMenu() {
 
           {/* Desktop CTA + User Menu + Mobile Burger */}
           <div className="flex items-center gap-4">
-            
             {/* User Dropdown / Sign In Link */}
             {user ? (
               <div className="relative">
@@ -92,40 +109,105 @@ export default function PublicHeaderMenu() {
                     e.stopPropagation();
                     setDropdownOpen(!dropdownOpen);
                   }}
-                  className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 border border-gray-100 transition-colors cursor-pointer bg-transparent"
+                  className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 border border-gray-200 transition-colors cursor-pointer bg-white shadow-xs"
                 >
-                  <div className="w-8 h-8 rounded-full bg-primary/8 text-primary flex items-center justify-center font-bold text-sm">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black text-sm">
                     {user.fullName.charAt(0).toUpperCase()}
                   </div>
-                  <span className="hidden lg:inline text-sm font-semibold text-secondary max-w-[100px] truncate">
+                  <span className="hidden lg:inline text-sm font-semibold text-secondary max-w-[120px] truncate">
                     {user.fullName}
                   </span>
                   <FiChevronDown className="text-gray-400 text-xs hidden lg:block" />
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] py-2 z-[1000] text-left animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] py-2 z-[1000] text-left animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="px-4 py-2 border-b border-gray-100 mb-1">
-                      <p className="text-sm font-bold text-secondary truncate">{user.fullName}</p>
-                      <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
+                      <p className="text-xs font-black text-secondary truncate">{user.fullName}</p>
+                      <p className="text-[10px] font-medium text-gray-500 truncate">{user.email}</p>
                     </div>
-                    <Link
-                      href="/profile"
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-gray-50 transition-colors no-underline"
-                    >
-                      <FiUser className="text-gray-400" />
-                      My Profile
-                    </Link>
-                    <button
-                      onClick={() => {
-                        logout();
-                        window.location.href = "/login";
-                      }}
-                      className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer border-none bg-transparent"
-                    >
-                      <FiLogOut className="text-red-400" />
-                      Sign Out
-                    </button>
+
+
+                    <div className="py-1">
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline"
+                      >
+                        <FiGrid className="text-primary text-sm" />
+                        Dashboard Overview
+                      </Link>
+
+                      {isAdminOrStaff ? (
+                        <>
+                          <Link
+                            href="/dashboard/properties"
+                            className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline"
+                          >
+                            <FiHome className="text-gray-400 text-sm" />
+                            Properties Directory
+                          </Link>
+                          <Link
+                            href="/dashboard/flats"
+                            className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline"
+                          >
+                            <FiBookmark className="text-gray-400 text-sm" />
+                            Flats Inventory
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <Link
+                            href="/dashboard/my-bookings"
+                            className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline"
+                          >
+                            <FiBookmark className="text-gray-400 text-sm" />
+                            My Bookings
+                          </Link>
+                          <Link
+                            href="/dashboard/billing"
+                            className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline"
+                          >
+                            <FiFileText className="text-gray-400 text-sm" />
+                            Billing
+                          </Link>
+                          <Link
+                            href="/dashboard/payments"
+                            className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline"
+                          >
+                            <FiCreditCard className="text-gray-400 text-sm" />
+                            Payments
+                          </Link>
+                          <Link
+                            href="/dashboard/support"
+                            className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline"
+                          >
+                            <FiHelpCircle className="text-gray-400 text-sm" />
+                            Support
+                          </Link>
+                        </>
+                      )}
+
+                      <Link
+                        href="/dashboard/my-account"
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline border-t border-gray-100 mt-1 pt-2"
+                      >
+                        <FiUser className="text-gray-400 text-sm" />
+                        My Profile & Account
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-gray-100 pt-1 mt-1">
+                      <button
+                        onClick={() => {
+                          logout();
+                          window.location.href = "/login";
+                        }}
+                        className="flex items-center gap-2.5 w-full text-left px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors cursor-pointer border-none bg-transparent"
+                      >
+                        <FiLogOut className="text-red-400 text-sm" />
+                        Sign Out
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -195,7 +277,7 @@ export default function PublicHeaderMenu() {
         {user ? (
           <div className="p-4 border-b border-gray-100 bg-gray-50/50">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/8 text-primary flex items-center justify-center font-bold text-sm">
+              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
                 {user.fullName.charAt(0).toUpperCase()}
               </div>
               <div className="text-left truncate">
@@ -203,11 +285,18 @@ export default function PublicHeaderMenu() {
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
             </div>
-            <div className="flex gap-2 mt-4">
+            <div className="grid grid-cols-2 gap-2 mt-4">
               <Link
-                href="/profile"
+                href="/dashboard"
                 onClick={() => setMobileOpen(false)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-white border border-gray-200 text-xs font-semibold text-secondary rounded-lg no-underline"
+                className="flex items-center justify-center gap-1.5 py-2 bg-primary text-white text-xs font-bold rounded-lg no-underline col-span-2"
+              >
+                <FiGrid /> Go to Dashboard
+              </Link>
+              <Link
+                href="/dashboard/my-account"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-1.5 py-2 bg-white border border-gray-200 text-xs font-semibold text-secondary rounded-lg no-underline"
               >
                 <FiUser /> Profile
               </Link>
@@ -217,7 +306,7 @@ export default function PublicHeaderMenu() {
                   logout();
                   window.location.href = "/login";
                 }}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-red-50 text-xs font-semibold text-red-600 rounded-lg border-none cursor-pointer"
+                className="flex items-center justify-center gap-1.5 py-2 bg-red-50 text-xs font-semibold text-red-600 rounded-lg border-none cursor-pointer"
               >
                 <FiLogOut /> Sign Out
               </button>
@@ -242,7 +331,7 @@ export default function PublicHeaderMenu() {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={`block px-4 py-3 text-[15px] font-medium no-underline rounded-lg transition-colors duration-200 hover:text-primary hover:bg-primary/5 ${
-                  isActive(link.href) ? "text-primary bg-primary/5" : "text-secondary"
+                  isActive(link.href) ? "text-primary bg-primary/5 font-bold" : "text-secondary"
                 }`}
               >
                 {link.label}
