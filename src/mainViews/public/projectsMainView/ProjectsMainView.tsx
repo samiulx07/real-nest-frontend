@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 import { PropertyCard } from "@/components/propertyCard/PropertyCard";
 import { HiOutlineBuildingOffice2, HiOutlineMagnifyingGlass, HiOutlineFunnel } from "react-icons/hi2";
 import instance from "@/services/baseServices";
@@ -10,6 +11,8 @@ export const ProjectsMainView = () => {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebounce(search, 500);
+
   const [cityFilter, setCityFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
@@ -17,7 +20,7 @@ export const ProjectsMainView = () => {
     try {
       setLoading(true);
       let url = "/properties?limit=100";
-      if (search) url += `&search=${encodeURIComponent(search)}`;
+      if (debouncedSearch) url += `&search=${encodeURIComponent(debouncedSearch)}`;
       if (cityFilter) url += `&city=${encodeURIComponent(cityFilter)}`;
       if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
 
@@ -34,13 +37,12 @@ export const ProjectsMainView = () => {
 
   useEffect(() => {
     fetchProjects();
-  }, [search, cityFilter, statusFilter]);
+  }, [debouncedSearch, cityFilter, statusFilter]);
 
   return (
     <div className="min-h-screen bg-[#fafbfc] pb-16">
       {/* Hero Header Section */}
       <div className="bg-[#00062A] text-white pt-28 pb-16 md:pt-32 md:pb-20 px-4 relative overflow-hidden">
-
         <div className="container mx-auto text-center max-w-3xl relative z-10 space-y-4">
           <div className="inline-flex items-center gap-2 bg-[#FF4C00]/20 text-[#FF4C00] text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider border border-[#FF4C00]/30">
             <HiOutlineBuildingOffice2 className="w-4 h-4" />

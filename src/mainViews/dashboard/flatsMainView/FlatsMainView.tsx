@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
@@ -25,6 +26,7 @@ export const FlatsMainView = () => {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebounce(search, 500);
   const [statusFilter, setStatusFilter] = useState("");
   const [bedsFilter, setBedsFilter] = useState("");
 
@@ -37,7 +39,7 @@ export const FlatsMainView = () => {
     try {
       setLoading(true);
       let url = "/flats?limit=100";
-      if (search) url += `&search=${encodeURIComponent(search)}`;
+      if (debouncedSearch) url += `&search=${encodeURIComponent(debouncedSearch)}`;
       if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
       if (bedsFilter) url += `&beds=${encodeURIComponent(bedsFilter)}`;
 
@@ -54,7 +56,7 @@ export const FlatsMainView = () => {
 
   useEffect(() => {
     fetchFlats();
-  }, [search, statusFilter, bedsFilter]);
+  }, [debouncedSearch, statusFilter, bedsFilter]);
 
   const handleDelete = async (id: string, title: string) => {
     const result = await Swal.fire({

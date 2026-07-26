@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { useRootContext } from "@/contexts/RootContext";
-
-
-
 import {
   HiOutlineBuildingOffice2,
   HiOutlineMagnifyingGlass,
@@ -26,6 +24,7 @@ export const PropertiesMainView = () => {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebounce(search, 500);
   const [cityFilter, setCityFilter] = useState("");
 
   const isAdminOrStaff =
@@ -37,7 +36,7 @@ export const PropertiesMainView = () => {
     try {
       setLoading(true);
       let url = "/properties?limit=50";
-      if (search) url += `&search=${encodeURIComponent(search)}`;
+      if (debouncedSearch) url += `&search=${encodeURIComponent(debouncedSearch)}`;
       if (cityFilter) url += `&city=${encodeURIComponent(cityFilter)}`;
 
       const res = await instance.get(url);
@@ -53,7 +52,8 @@ export const PropertiesMainView = () => {
 
   useEffect(() => {
     fetchProperties();
-  }, [search, cityFilter]);
+  }, [debouncedSearch, cityFilter]);
+
 
   const handleDelete = async (id: string, title: string) => {
     const result = await Swal.fire({
