@@ -1,5 +1,7 @@
 import React from "react";
+import Link from "next/link";
 import { FlatCard } from "../flatCard/FlatCard";
+
 import { FeaturedFlat } from "@/shared/interface";
 import { MdOutlineStars } from "react-icons/md";
 import { IoChevronForward } from "react-icons/io5";
@@ -34,14 +36,15 @@ const FeaturedFlats: React.FC<FeaturedFlatsProps> = ({ flats }) => {
 
         {/* Center Bottom CTA */}
         <div className="flex justify-center">
-          <Button
-            variant={BUTTON_VARIANT_ENUM.PRIMARY}
-            className="flex items-center justify-center gap-1.5 px-8 py-3.5 font-bold text-sm cursor-pointer hover:shadow-lg hover:shadow-primary/20 active:scale-98 transition duration-200"
-            rightIcon={<IoChevronForward className="text-base" />}
+          <Link
+            href="/flats"
+            className="flex items-center justify-center gap-1.5 px-8 py-3.5 font-bold text-sm bg-[#00062A] text-white rounded-xl hover:bg-[#FF4C00] shadow-md transition duration-200 no-underline"
           >
-            View All Flats
-          </Button>
+            <span>View All Flats</span>
+            <IoChevronForward className="text-base" />
+          </Link>
         </div>
+
       </div>
     </section>
   );
