@@ -4,9 +4,11 @@ import React from "react";
 import Image from "next/image";
 import LoginForm from "@/components/authForms/LoginForm";
 import SignupForm from "@/components/authForms/SignupForm";
+import ForgotPasswordForm from "@/components/authForms/ForgotPasswordForm";
+import ResetPasswordForm from "@/components/authForms/ResetPasswordForm";
 
 interface AuthMainViewProps {
-  type: "login" | "signup";
+  type: "login" | "signup" | "forgot-password" | "reset-password";
 }
 
 const AuthMainView: React.FC<AuthMainViewProps> = ({ type }) => {
@@ -43,7 +45,15 @@ const AuthMainView: React.FC<AuthMainViewProps> = ({ type }) => {
 
         {/* Right Form Panel */}
         <div className="flex items-stretch justify-center w-full">
-          {type === "login" ? <LoginForm /> : <SignupForm />}
+          {type === "login" ? (
+            <LoginForm />
+          ) : type === "signup" ? (
+            <SignupForm />
+          ) : type === "forgot-password" ? (
+            <ForgotPasswordForm />
+          ) : (
+            <ResetPasswordForm />
+          )}
         </div>
 
       </div>
