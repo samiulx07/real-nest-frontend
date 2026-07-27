@@ -15,10 +15,13 @@ import {
   HiOutlineDocumentText,
   HiOutlinePlus,
   HiOutlineSparkles,
+  HiOutlinePhoto,
+  HiOutlineXMark,
 } from "react-icons/hi2";
 import { BiBed, BiBath, BiArea } from "react-icons/bi";
 import instance from "@/services/baseServices";
 import CreatableNumberSelect from "@/components/common/CreatableNumberSelect";
+import MediaPickerModal from "@/components/mediaPickerModal/MediaPickerModal";
 
 const DEFAULT_FLAT_FEATURES = [
   "South Facing",
@@ -42,6 +45,7 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     propertyId: "",

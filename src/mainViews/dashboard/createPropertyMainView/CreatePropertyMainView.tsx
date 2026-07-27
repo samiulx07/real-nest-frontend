@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { toast } from "react-toastify";
 
 import { HiOutlineLocationMarker as LocationIcon } from "react-icons/hi";
@@ -16,10 +17,20 @@ import {
   HiOutlineSparkles,
   HiOutlineDocumentText,
   HiOutlinePlus,
+  HiOutlinePhoto,
+  HiOutlineXMark,
+  HiOutlineShieldCheck,
+  HiOutlineCalendarDays,
+  HiOutlineMapPin,
 } from "react-icons/hi2";
 
 import instance from "@/services/baseServices";
 import CreatableNumberSelect from "@/components/common/CreatableNumberSelect";
+import BdAddressSelector from "@/components/bdAddressSelector/BdAddressSelector";
+import MediaPickerModal from "@/components/mediaPickerModal/MediaPickerModal";
+
+// Dynamic import for MapPicker (Leaflet needs client-only rendering)
+const MapPicker = dynamic(() => import("@/components/mapPicker/MapPicker"), { ssr: false });
 
 const DEFAULT_PROPERTY_FEATURES = [
   "Swimming Pool",
@@ -38,6 +49,8 @@ export const CreatePropertyMainView = () => {
   const [submitting, setSubmitting] = useState(false);
   const [hasGroundFloor, setHasGroundFloor] = useState(true);
 
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -45,6 +58,10 @@ export const CreatePropertyMainView = () => {
     address: "",
     area: "",
     city: "Dhaka",
+    division: "",
+    district: "",
+    upazila: "",
+    union: "",
     latitude: 23.7925,
     longitude: 90.4078,
     floorLabel: "G+9",
@@ -53,18 +70,22 @@ export const CreatePropertyMainView = () => {
     unitsPerFloor: 2,
     startingPrice: 15000000,
     handoverDate: "",
+    completionDate: "",
+    constructionStart: "",
     landArea: "5 Katha",
     facing: "South",
     roadSize: "30 Feet",
+    totalParkingSlots: 0,
     parkingAvailable: true,
     liftAvailable: true,
     generatorBackup: true,
     securityAvailable: true,
-    imageUrls: [
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
-    ],
+    developerName: "",
+    rajukApproval: false,
+    reraRegistered: false,
+    imageUrls: [] as string[],
     amenities: ["Swimming Pool", "Gym", "Community Hall", "Rooftop Garden"],
-    status: "Ongoing",
+    status: "ONGOING",
     isFeatured: false,
     isPublished: true,
   });
@@ -147,9 +168,17 @@ export const CreatePropertyMainView = () => {
         totalFloors: Number(formData.totalFloors),
         totalUnits: Number(formData.totalUnits),
         unitsPerFloor: formData.unitsPerFloor ? Number(formData.unitsPerFloor) : undefined,
+        totalParkingSlots: formData.totalParkingSlots ? Number(formData.totalParkingSlots) : undefined,
         latitude: formData.latitude ? Number(formData.latitude) : undefined,
         longitude: formData.longitude ? Number(formData.longitude) : undefined,
         handoverDate: formData.handoverDate ? new Date(formData.handoverDate).toISOString() : undefined,
+        completionDate: formData.completionDate ? new Date(formData.completionDate).toISOString() : undefined,
+        constructionStart: formData.constructionStart ? new Date(formData.constructionStart).toISOString() : undefined,
+        division: formData.division || undefined,
+        district: formData.district || undefined,
+        upazila: formData.upazila || undefined,
+        union: formData.union || undefined,
+        developerName: formData.developerName || undefined,
       };
 
       const res = await instance.post("/properties", payload);
@@ -239,10 +268,11 @@ export const CreatePropertyMainView = () => {
                 onChange={handleChange}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white"
               >
-                <option value="Ongoing">Ongoing</option>
-                <option value="Completed">Completed</option>
-                <option value="Ready to Move">Ready to Move</option>
-                <option value="Handovered">Handovered</option>
+                <option value="UPCOMING">Upcoming</option>
+                <option value="ONGOING">Ongoing</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="READY_TO_MOVE">Ready to Move</option>
+                <option value="HANDOVERED">Handovered</option>
               </select>
             </div>
 
@@ -308,19 +338,198 @@ export const CreatePropertyMainView = () => {
                 <HiOutlineGlobeAlt className="w-3.5 h-3.5 text-slate-400" />
                 <span>City</span>
               </label>
-              <select
+              <input
+                type="text"
                 name="city"
+                placeholder="e.g. Dhaka"
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white"
-              >
-                <option value="Dhaka">Dhaka</option>
-                <option value="Chittagong">Chittagong</option>
-                <option value="Sylhet">Sylhet</option>
-                <option value="Rajshahi">Rajshahi</option>
-              </select>
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+              />
             </div>
           </div>
+
+          {/* BD Address Selector */}
+          <div className="pt-2">
+            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+              <HiOutlineMapPin className="w-3.5 h-3.5 text-[#FF4C00]" />
+              <span>Administrative Location (Bangladesh)</span>
+            </label>
+            <BdAddressSelector
+              value={{
+                division: formData.division,
+                district: formData.district,
+                upazila: formData.upazila,
+                union: formData.union,
+              }}
+              onChange={(addr) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  division: addr.division || "",
+                  district: addr.district || "",
+                  upazila: addr.upazila || "",
+                  union: addr.union || "",
+                }))
+              }
+            />
+          </div>
+
+          {/* Map Picker */}
+          <div className="pt-2">
+            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+              <HiOutlineGlobeAlt className="w-3.5 h-3.5 text-[#FF4C00]" />
+              <span>Map Coordinates (Click or drag marker)</span>
+            </label>
+            <MapPicker
+              latitude={formData.latitude}
+              longitude={formData.longitude}
+              onChange={(lat, lng) =>
+                setFormData((prev) => ({ ...prev, latitude: lat, longitude: lng }))
+              }
+            />
+          </div>
+        </div>
+
+        {/* Section 2B: Project Dates & Compliance */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <h3 className="text-sm font-black text-[#FF4C00] uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+            <HiOutlineShieldCheck className="w-5 h-5" />
+            <span>Project Dates & Compliance</span>
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineCalendarDays className="w-3.5 h-3.5 text-slate-400" />
+                <span>Construction Start</span>
+              </label>
+              <input
+                type="date"
+                name="constructionStart"
+                value={formData.constructionStart}
+                onChange={handleChange}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00]"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineCalendarDays className="w-3.5 h-3.5 text-slate-400" />
+                <span>Expected Completion</span>
+              </label>
+              <input
+                type="date"
+                name="completionDate"
+                value={formData.completionDate}
+                onChange={handleChange}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00]"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineCalendarDays className="w-3.5 h-3.5 text-[#FF4C00]" />
+                <span>Handover Date</span>
+              </label>
+              <input
+                type="date"
+                name="handoverDate"
+                value={formData.handoverDate}
+                onChange={handleChange}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00]"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineBuildingOffice2 className="w-3.5 h-3.5 text-slate-400" />
+                <span>Developer / Builder Name</span>
+              </label>
+              <input
+                type="text"
+                name="developerName"
+                placeholder="e.g. ABC Developers Ltd."
+                value={formData.developerName}
+                onChange={handleChange}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+              />
+            </div>
+            <div className="flex items-end gap-6 pb-1">
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                <input
+                  type="checkbox"
+                  name="rajukApproval"
+                  checked={formData.rajukApproval}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-[#FF4C00] rounded border-slate-300 focus:ring-[#FF4C00]"
+                />
+                <span>RAJUK Approved</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                <input
+                  type="checkbox"
+                  name="reraRegistered"
+                  checked={formData.reraRegistered}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-[#FF4C00] rounded border-slate-300 focus:ring-[#FF4C00]"
+                />
+                <span>RERA Registered</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 2C: Property Images */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <h3 className="text-sm font-black text-[#FF4C00] uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+            <HiOutlinePhoto className="w-5 h-5" />
+            <span>Property Images</span>
+          </h3>
+
+          {/* Selected Images Preview */}
+          {formData.imageUrls.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {formData.imageUrls.map((url, idx) => (
+                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 group">
+                  <img src={url} alt={`Property ${idx + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        imageUrls: prev.imageUrls.filter((_, i) => i !== idx),
+                      }))
+                    }
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer border-none"
+                  >
+                    <HiOutlineXMark size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setMediaPickerOpen(true)}
+            className="w-full py-3 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 text-xs font-bold hover:border-[#FF4C00] hover:text-[#FF4C00] transition cursor-pointer bg-transparent flex items-center justify-center gap-2"
+          >
+            <HiOutlinePhoto className="w-4 h-4" />
+            {formData.imageUrls.length > 0 ? "Add More Images" : "Select Images from Media Library"}
+          </button>
+
+          <MediaPickerModal
+            isOpen={mediaPickerOpen}
+            onClose={() => setMediaPickerOpen(false)}
+            folder="properties"
+            selectedUrls={formData.imageUrls}
+            onSelect={(urls) =>
+              setFormData((prev) => ({
+                ...prev,
+                imageUrls: [...new Set([...prev.imageUrls, ...urls])],
+              }))
+            }
+          />
         </div>
 
         {/* Section 3: Building Specifications */}

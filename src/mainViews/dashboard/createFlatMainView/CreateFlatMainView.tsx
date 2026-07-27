@@ -15,10 +15,13 @@ import {
   HiOutlineDocumentText,
   HiOutlinePlus,
   HiOutlineSparkles,
+  HiOutlinePhoto,
+  HiOutlineXMark,
 } from "react-icons/hi2";
 import { BiBed, BiBath, BiArea } from "react-icons/bi";
 import instance from "@/services/baseServices";
 import CreatableNumberSelect from "@/components/common/CreatableNumberSelect";
+import MediaPickerModal from "@/components/mediaPickerModal/MediaPickerModal";
 
 const DEFAULT_FLAT_FEATURES = [
   "South Facing",
@@ -36,6 +39,8 @@ export const CreateFlatMainView = () => {
   const [properties, setProperties] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+
   const [formData, setFormData] = useState({
     propertyId: "",
     title: "",
@@ -48,10 +53,14 @@ export const CreateFlatMainView = () => {
     size: 1650,
     price: 18500000,
     status: "AVAILABLE",
+    furnishing: "Semi-Furnished",
+    facing: "South",
+    floorType: "Tiles",
+    hasGasLine: true,
+    hasWaterSupply: true,
+    completionDate: "",
     description: "",
-    imageUrls: [
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
-    ],
+    imageUrls: [] as string[],
     amenities: ["South Facing", "Gas Line Connected", "Lake View"],
     isFeatured: false,
     isPublished: true,

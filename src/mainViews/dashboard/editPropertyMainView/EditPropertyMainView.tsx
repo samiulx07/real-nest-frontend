@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { toast } from "react-toastify";
 
 import { HiOutlineLocationMarker as LocationIcon } from "react-icons/hi";
@@ -16,9 +17,19 @@ import {
   HiOutlineSparkles,
   HiOutlineDocumentText,
   HiOutlinePlus,
+  HiOutlinePhoto,
+  HiOutlineXMark,
+  HiOutlineShieldCheck,
+  HiOutlineCalendarDays,
+  HiOutlineMapPin,
 } from "react-icons/hi2";
 import instance from "@/services/baseServices";
 import CreatableNumberSelect from "@/components/common/CreatableNumberSelect";
+import BdAddressSelector from "@/components/bdAddressSelector/BdAddressSelector";
+import MediaPickerModal from "@/components/mediaPickerModal/MediaPickerModal";
+
+// Dynamic import for MapPicker (Leaflet needs client-only rendering)
+const MapPicker = dynamic(() => import("@/components/mapPicker/MapPicker"), { ssr: false });
 
 const DEFAULT_PROPERTY_FEATURES = [
   "Swimming Pool",
@@ -44,6 +55,7 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
   const [submitting, setSubmitting] = useState(false);
 
   const [hasGroundFloor, setHasGroundFloor] = useState(true);
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -52,6 +64,10 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
     address: "",
     area: "",
     city: "Dhaka",
+    division: "",
+    district: "",
+    upazila: "",
+    union: "",
     latitude: 23.7925,
     longitude: 90.4078,
     floorLabel: "G+9",
@@ -60,16 +76,22 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
     unitsPerFloor: 2,
     startingPrice: 15000000,
     handoverDate: "",
+    completionDate: "",
+    constructionStart: "",
     landArea: "5 Katha",
     facing: "South",
     roadSize: "30 Feet",
+    totalParkingSlots: 0,
     parkingAvailable: true,
     liftAvailable: true,
     generatorBackup: true,
     securityAvailable: true,
+    developerName: "",
+    rajukApproval: false,
+    reraRegistered: false,
     imageUrls: [] as string[],
     amenities: [] as string[],
-    status: "Ongoing",
+    status: "ONGOING",
     isFeatured: false,
     isPublished: true,
   });
@@ -93,6 +115,10 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
             address: data.address || "",
             area: data.area || "",
             city: data.city || "Dhaka",
+            division: data.division || "",
+            district: data.district || "",
+            upazila: data.upazila || "",
+            union: data.union || "",
             latitude: data.latitude ? Number(data.latitude) : 23.7925,
             longitude: data.longitude ? Number(data.longitude) : 90.4078,
             floorLabel: data.floorLabel || "G+9",
@@ -101,16 +127,22 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
             unitsPerFloor: data.unitsPerFloor || 2,
             startingPrice: data.startingPrice ? Number(data.startingPrice) : 0,
             handoverDate: data.handoverDate ? data.handoverDate.split("T")[0] : "",
+            completionDate: data.completionDate ? data.completionDate.split("T")[0] : "",
+            constructionStart: data.constructionStart ? data.constructionStart.split("T")[0] : "",
             landArea: data.landArea || "",
             facing: data.facing || "South",
             roadSize: data.roadSize || "",
+            totalParkingSlots: data.totalParkingSlots || 0,
             parkingAvailable: Boolean(data.parkingAvailable),
             liftAvailable: Boolean(data.liftAvailable),
             generatorBackup: Boolean(data.generatorBackup),
             securityAvailable: Boolean(data.securityAvailable),
+            developerName: data.developerName || "",
+            rajukApproval: Boolean(data.rajukApproval),
+            reraRegistered: Boolean(data.reraRegistered),
             imageUrls: Array.isArray(data.imageUrls) ? data.imageUrls : [],
             amenities: Array.isArray(data.amenities) ? data.amenities : [],
-            status: data.status || "Ongoing",
+            status: data.status || "ONGOING",
             isFeatured: Boolean(data.isFeatured),
             isPublished: Boolean(data.isPublished),
           });
@@ -305,10 +337,11 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
                 onChange={handleChange}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white"
               >
-                <option value="Ongoing">Ongoing</option>
-                <option value="Completed">Completed</option>
-                <option value="Ready to Move">Ready to Move</option>
-                <option value="Handovered">Handovered</option>
+                <option value="UPCOMING">Upcoming</option>
+                <option value="ONGOING">Ongoing</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="READY_TO_MOVE">Ready to Move</option>
+                <option value="HANDOVERED">Handovered</option>
               </select>
             </div>
 
