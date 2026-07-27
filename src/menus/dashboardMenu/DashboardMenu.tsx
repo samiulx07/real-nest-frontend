@@ -16,6 +16,7 @@ import {
   HiOutlineQuestionMarkCircle,
   HiOutlineArrowLeftOnRectangle,
   HiOutlineXMark,
+  HiOutlinePhoto,
 } from "react-icons/hi2";
 
 interface DashboardMenuProps {
@@ -45,6 +46,12 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, onClose }) => {
       href: "/dashboard/flats",
       icon: HiOutlineHome,
       roles: ["SUPER_ADMIN", "ADMIN", "STAFF"],
+    },
+    {
+      name: "Media Library",
+      href: "/dashboard/media",
+      icon: HiOutlinePhoto,
+      roles: ["SUPER_ADMIN", "ADMIN", "STAFF", "CUSTOMER"],
     },
     {
       name: "My Bookings",
