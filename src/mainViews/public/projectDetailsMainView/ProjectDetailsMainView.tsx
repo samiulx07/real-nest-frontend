@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FlatCard } from "@/components/flatCard/FlatCard";
+import ImageGallery from "@/components/imageGallery/ImageGallery";
 import { HiOutlineLocationMarker as LocationIcon } from "react-icons/hi";
 import {
   HiOutlineArrowLeft,
@@ -15,6 +16,8 @@ import {
   HiOutlineSparkles,
   HiOutlinePhone,
   HiOutlineEnvelope,
+  HiOutlineShieldCheck,
+  HiOutlineCalendarDays,
 } from "react-icons/hi2";
 import instance from "@/services/baseServices";
 
@@ -134,32 +137,9 @@ export const ProjectDetailsMainView: React.FC<ProjectDetailsMainViewProps> = ({
       <div className="container mx-auto max-w-6xl px-4 -mt-8 relative z-10 space-y-8">
         {/* Gallery & Quick Specs Card */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Gallery Block */}
-          <div className="lg:col-span-2 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
-            <div className="relative h-[380px] sm:h-[450px] w-full rounded-xl overflow-hidden bg-slate-100">
-              <Image
-                src={activeImage}
-                alt={project.title}
-                fill
-                className="object-cover transition-all duration-300"
-              />
-            </div>
-
-            {imagesList.length > 1 && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                {imagesList.map((img: string, idx: number) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveImage(img)}
-                    className={`relative w-20 h-16 rounded-lg overflow-hidden shrink-0 border-2 transition ${
-                      activeImage === img ? "border-[#FF4C00]" : "border-transparent opacity-70"
-                    }`}
-                  >
-                    <Image src={img} alt="Thumbnail" fill className="object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
+          {/* Gallery Block — with Lightbox */}
+          <div className="lg:col-span-2 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+            <ImageGallery images={imagesList} previewCount={5} />
           </div>
 
           {/* Quick Info & Sales Box */}
