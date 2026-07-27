@@ -36,6 +36,26 @@ const DEFAULT_FLAT_FEATURES = [
   "Decorated Interior",
 ];
 
+const FLAT_CATEGORIES = [
+  "Luxury Suite",
+  "Premium Unit",
+  "Executive Suite",
+  "Deluxe Unit",
+  "Standard Unit",
+  "Penthouse",
+  "Duplex Suite",
+  "Studio Apartment",
+];
+
+const getBuildingInitials = (buildingTitle: string) => {
+  if (!buildingTitle) return "PROP";
+  const words = buildingTitle.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 1) {
+    return words[0].slice(0, 3).toUpperCase();
+  }
+  return words.map((w) => w[0]).join("").toUpperCase().slice(0, 4);
+};
+
 interface EditFlatMainViewProps {
   flatId?: string;
 }
@@ -50,6 +70,11 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+
+  const [flatCategory, setFlatCategory] = useState("Luxury Suite");
+  const [customCategory, setCustomCategory] = useState("");
+  const [unitSuffix, setUnitSuffix] = useState("A");
+  const [customSuffix, setCustomSuffix] = useState("");
 
   const [formData, setFormData] = useState({
     propertyId: "",
@@ -77,6 +102,29 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
   });
 
   const [amenityInput, setAmenityInput] = useState("");
+
+  const handleAutoGenerateTitleAndCode = (
+    pId = formData.propertyId,
+    flNum = formData.floorNumber,
+    category = flatCategory,
+    suffix = unitSuffix,
+    customCatVal = customCategory,
+    customSufVal = customSuffix,
+    propsList = properties
+  ) => {
+    const selectedProp = propsList.find((p) => p.id === pId);
+    const initials = selectedProp ? getBuildingInitials(selectedProp.title) : "SN";
+    const effectiveCategory = category === "Custom..." ? (customCatVal || "Unit") : category;
+    const effectiveSuffix = suffix === "Custom..." ? (customSufVal || "1") : suffix;
+    const code = `${flNum}${effectiveSuffix}`;
+    const generatedTitle = `${initials}-${code}-${effectiveCategory}`;
+
+    setFormData((prev) => ({
+      ...prev,
+      flatNumber: code,
+      title: generatedTitle,
+    }));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -255,7 +303,10 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
               <select
                 name="propertyId"
                 value={formData.propertyId}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  handleAutoGenerateTitleAndCode(e.target.value, formData.floorNumber, flatCategory, unitSuffix, customCategory, customSuffix);
+                }}
                 required
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white"
               >
@@ -267,15 +318,99 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
               </select>
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:col-span-2">
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                  <HiOutlineSparkles className="w-3.5 h-3.5 text-[#FF4C00]" />
+                  <span>Flat Category Preset</span>
+                </label>
+                <select
+                  value={flatCategory}
+                  onChange={(e) => {
+                    const cat = e.target.value;
+                    setFlatCategory(cat);
+                    handleAutoGenerateTitleAndCode(formData.propertyId, formData.floorNumber, cat, unitSuffix, customCategory, customSuffix);
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white"
+                >
+                  {FLAT_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                  <option value="Custom...">Custom...</option>
+                </select>
+                {flatCategory === "Custom..." && (
+                  <input
+                    type="text"
+                    placeholder="Enter custom category (e.g. Royal Duplex)"
+                    value={customCategory}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCustomCategory(val);
+                      handleAutoGenerateTitleAndCode(formData.propertyId, formData.floorNumber, "Custom...", unitSuffix, val, customSuffix);
+                    }}
+                    className="w-full mt-2 px-3 py-2 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+                  />
+                )}
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                  <HiOutlineTag className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Unit Suffix / Letter</span>
+                </label>
+                <select
+                  value={unitSuffix}
+                  onChange={(e) => {
+                    const suf = e.target.value;
+                    setUnitSuffix(suf);
+                    handleAutoGenerateTitleAndCode(formData.propertyId, formData.floorNumber, flatCategory, suf, customCategory, customSuffix);
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white"
+                >
+                  {["A", "B", "C", "D", "E", "F", "G", "H", "1", "2", "3", "4"].map((letter) => (
+                    <option key={letter} value={letter}>
+                      Unit {letter}
+                    </option>
+                  ))}
+                  <option value="Custom...">Custom...</option>
+                </select>
+                {unitSuffix === "Custom..." && (
+                  <input
+                    type="text"
+                    placeholder="Enter custom suffix (e.g. 501, PH-1)"
+                    value={customSuffix}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCustomSuffix(val);
+                      handleAutoGenerateTitleAndCode(formData.propertyId, formData.floorNumber, flatCategory, "Custom...", customCategory, val);
+                    }}
+                    className="w-full mt-2 px-3 py-2 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+                  />
+                )}
+              </div>
+            </div>
+
             <div>
-              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                <HiOutlineHome className="w-3.5 h-3.5 text-[#00062A]" />
-                <span>Flat Title *</span>
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <HiOutlineHome className="w-3.5 h-3.5 text-[#00062A]" />
+                  <span>Flat Title *</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => handleAutoGenerateTitleAndCode()}
+                  className="text-[10px] font-extrabold text-[#FF4C00] hover:underline cursor-pointer bg-transparent border-none flex items-center gap-1"
+                >
+                  <HiOutlineSparkles className="w-3 h-3" />
+                  <span>Auto-Generate</span>
+                </button>
+              </div>
               <input
                 type="text"
                 name="title"
-                placeholder="e.g. SN-4A - Luxury Suite"
+                placeholder="e.g. SN-4A-Luxury Suite"
                 value={formData.title}
                 onChange={handleChange}
                 required
@@ -306,7 +441,10 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
               </label>
               <CreatableNumberSelect
                 value={formData.floorNumber}
-                onChange={(val) => setFormData((prev) => ({ ...prev, floorNumber: val }))}
+                onChange={(val) => {
+                  setFormData((prev) => ({ ...prev, floorNumber: val }));
+                  handleAutoGenerateTitleAndCode(formData.propertyId, val, flatCategory, unitSuffix, customCategory, customSuffix);
+                }}
                 placeholder="Select floor (1-50)"
               />
             </div>
