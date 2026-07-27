@@ -39,15 +39,17 @@ export default function RootLayout({
           <AuthInit />
           <ToastContainer
             position="top-right"
-            autoClose={3500}
-            hideProgressBar={false}
+            autoClose={2200}
+            hideProgressBar={true}
+            closeButton={false}
             newestOnTop
             closeOnClick
             rtl={false}
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="colored"
+            theme="light"
+            toastClassName="!rounded-xl !shadow-md !border !border-slate-100 !text-[11px] !font-bold !text-slate-800 !py-2 !px-3.5 !min-h-[40px] !w-fit max-w-xs"
           />
           {children}
         </RootProvider>
