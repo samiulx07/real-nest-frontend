@@ -14,7 +14,7 @@ import {
   HiOutlineBanknotes,
   HiOutlineGlobeAlt,
   HiOutlineCheckBadge,
-  HiOutlineSparkles,
+  HiOutlineSparkles,  
   HiOutlineDocumentText,
   HiOutlinePlus,
   HiOutlinePhoto,
@@ -51,6 +51,12 @@ export const CreatePropertyMainView = () => {
 
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
+  const [landVal, setLandVal] = useState("5");
+  const [landUnit, setLandUnit] = useState("Katha");
+  const [roadVal, setRoadVal] = useState("30");
+  const [roadUnit, setRoadUnit] = useState("Feet");
+  const [buildingAgePreset, setBuildingAgePreset] = useState("Under Construction");
+
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -76,6 +82,7 @@ export const CreatePropertyMainView = () => {
     facing: "South",
     roadSize: "30 Feet",
     totalParkingSlots: 0,
+    buildingAge: "Under Construction",
     parkingAvailable: true,
     liftAvailable: true,
     generatorBackup: true,
@@ -300,11 +307,11 @@ export const CreatePropertyMainView = () => {
             <span>2. Location & Map Coordinates</span>
           </h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="sm:col-span-2">
+          <div className="space-y-4">
+            <div>
               <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
                 <LocationIcon className="w-3.5 h-3.5 text-slate-400" />
-                <span>Street Address *</span>
+                <span>Street Address / Building No. *</span>
               </label>
               <input
                 type="text"
@@ -317,61 +324,32 @@ export const CreatePropertyMainView = () => {
               />
             </div>
 
+            {/* Bangladesh Location Step-by-Step Selection */}
             <div>
-              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                <HiOutlineTag className="w-3.5 h-3.5 text-slate-400" />
-                <span>Area *</span>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                <HiOutlineMapPin className="w-3.5 h-3.5 text-[#FF4C00]" />
+                <span>Location (Division → District → Upazila/Thana → Union/Ward) *</span>
               </label>
-              <input
-                type="text"
-                name="area"
-                placeholder="e.g. Gulshan-2"
-                value={formData.area}
-                onChange={handleChange}
-                required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+              <BdAddressSelector
+                value={{
+                  division: formData.division,
+                  district: formData.district,
+                  upazila: formData.upazila,
+                  union: formData.union,
+                }}
+                onChange={(addr) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    division: addr.division || "",
+                    district: addr.district || "",
+                    upazila: addr.upazila || "",
+                    union: addr.union || "",
+                    city: addr.district || prev.city,
+                    area: addr.upazila || prev.area,
+                  }))
+                }
               />
             </div>
-
-            <div>
-              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                <HiOutlineGlobeAlt className="w-3.5 h-3.5 text-slate-400" />
-                <span>City</span>
-              </label>
-              <input
-                type="text"
-                name="city"
-                placeholder="e.g. Dhaka"
-                value={formData.city}
-                onChange={handleChange}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
-              />
-            </div>
-          </div>
-
-          {/* BD Address Selector */}
-          <div className="pt-2">
-            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-2">
-              <HiOutlineMapPin className="w-3.5 h-3.5 text-[#FF4C00]" />
-              <span>Administrative Location (Bangladesh)</span>
-            </label>
-            <BdAddressSelector
-              value={{
-                division: formData.division,
-                district: formData.district,
-                upazila: formData.upazila,
-                union: formData.union,
-              }}
-              onChange={(addr) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  division: addr.division || "",
-                  district: addr.district || "",
-                  upazila: addr.upazila || "",
-                  union: addr.union || "",
-                }))
-              }
-            />
           </div>
 
           {/* Map Picker */}
@@ -439,43 +417,27 @@ export const CreatePropertyMainView = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            <div>
-              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                <HiOutlineBuildingOffice2 className="w-3.5 h-3.5 text-slate-400" />
-                <span>Developer / Builder Name</span>
-              </label>
+          <div className="flex items-center gap-6 pt-2 border-t border-slate-100">
+            <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
               <input
-                type="text"
-                name="developerName"
-                placeholder="e.g. ABC Developers Ltd."
-                value={formData.developerName}
+                type="checkbox"
+                name="rajukApproval"
+                checked={formData.rajukApproval}
                 onChange={handleChange}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+                className="w-4 h-4 text-[#FF4C00] rounded border-slate-300 focus:ring-[#FF4C00]"
               />
-            </div>
-            <div className="flex items-end gap-6 pb-1">
-              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
-                <input
-                  type="checkbox"
-                  name="rajukApproval"
-                  checked={formData.rajukApproval}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-[#FF4C00] rounded border-slate-300 focus:ring-[#FF4C00]"
-                />
-                <span>RAJUK Approved</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
-                <input
-                  type="checkbox"
-                  name="reraRegistered"
-                  checked={formData.reraRegistered}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-[#FF4C00] rounded border-slate-300 focus:ring-[#FF4C00]"
-                />
-                <span>RERA Registered</span>
-              </label>
-            </div>
+              <span>RAJUK Approved</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+              <input
+                type="checkbox"
+                name="reraRegistered"
+                checked={formData.reraRegistered}
+                onChange={handleChange}
+                className="w-4 h-4 text-[#FF4C00] rounded border-slate-300 focus:ring-[#FF4C00]"
+              />
+              <span>RERA Registered</span>
+            </label>
           </div>
         </div>
 
@@ -608,6 +570,158 @@ export const CreatePropertyMainView = () => {
                 onChange={(val) => setFormData((prev) => ({ ...prev, totalUnits: val }))}
                 placeholder="Total Units"
               />
+            </div>
+          </div>
+
+          {/* Land & Physical Attributes */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-slate-100">
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineTag className="w-3.5 h-3.5 text-slate-400" />
+                <span>Land Area</span>
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="e.g. 5"
+                  value={landVal}
+                  onChange={(e) => {
+                    setLandVal(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      landArea: `${e.target.value} ${landUnit}`.trim(),
+                    }));
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+                />
+                <select
+                  value={landUnit}
+                  onChange={(e) => {
+                    setLandUnit(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      landArea: `${landVal} ${e.target.value}`.trim(),
+                    }));
+                  }}
+                  className="px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white shrink-0"
+                >
+                  <option value="Katha">Katha</option>
+                  <option value="Decimal">Decimal</option>
+                  <option value="Bigha">Bigha</option>
+                  <option value="Sq Ft">Sq Ft</option>
+                  <option value="Acre">Acre</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineGlobeAlt className="w-3.5 h-3.5 text-slate-400" />
+                <span>Facing / Orientation</span>
+              </label>
+              <select
+                name="facing"
+                value={formData.facing}
+                onChange={handleChange}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white"
+              >
+                <option value="South">South Facing</option>
+                <option value="North">North Facing</option>
+                <option value="East">East Facing</option>
+                <option value="West">West Facing</option>
+                <option value="South-East">South-East Facing</option>
+                <option value="South-West">South-West Facing</option>
+                <option value="North-East">North-East Facing</option>
+                <option value="North-West">North-West Facing</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineTag className="w-3.5 h-3.5 text-slate-400" />
+                <span>Front Road Size</span>
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="e.g. 30"
+                  value={roadVal}
+                  onChange={(e) => {
+                    setRoadVal(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      roadSize: `${e.target.value} ${roadUnit}`.trim(),
+                    }));
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+                />
+                <select
+                  value={roadUnit}
+                  onChange={(e) => {
+                    setRoadUnit(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      roadSize: `${roadVal} ${e.target.value}`.trim(),
+                    }));
+                  }}
+                  className="px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white shrink-0"
+                >
+                  <option value="Feet">Feet</option>
+                  <option value="Feet Road">Feet Road</option>
+                  <option value="Meter">Meter</option>
+                  <option value="Meter Road">Meter Road</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineBuildingOffice2 className="w-3.5 h-3.5 text-slate-400" />
+                <span>Total Parking Slots</span>
+              </label>
+              <CreatableNumberSelect
+                value={formData.totalParkingSlots}
+                onChange={(val) => setFormData((prev) => ({ ...prev, totalParkingSlots: val }))}
+                placeholder="0-50 Slots"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineBuildingOffice2 className="w-3.5 h-3.5 text-slate-400" />
+                <span>Building Age / Condition</span>
+              </label>
+              <select
+                value={buildingAgePreset}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setBuildingAgePreset(val);
+                  if (val !== "CUSTOM") {
+                    setFormData((prev) => ({ ...prev, buildingAge: val }));
+                  }
+                }}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white mb-2"
+              >
+                <option value="Under Construction">Under Construction</option>
+                <option value="Brand New (New Construction)">Brand New (New Construction)</option>
+                <option value="Less than 1 year">Less than 1 year</option>
+                <option value="1 - 3 years">1 - 3 years</option>
+                <option value="3 - 5 years">3 - 5 years</option>
+                <option value="5 - 10 years">5 - 10 years</option>
+                <option value="More than 10 years">More than 10 years</option>
+                <option value="CUSTOM">Custom...</option>
+              </select>
+
+              {buildingAgePreset === "CUSTOM" && (
+                <input
+                  type="text"
+                  name="buildingAge"
+                  placeholder="Enter custom condition e.g. 15 Years (Renovated)"
+                  value={formData.buildingAge || ""}
+                  onChange={handleChange}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+                />
+              )}
             </div>
           </div>
         </div>

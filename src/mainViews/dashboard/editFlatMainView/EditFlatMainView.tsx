@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-toastify";
 
@@ -35,13 +35,15 @@ const DEFAULT_FLAT_FEATURES = [
 ];
 
 interface EditFlatMainViewProps {
-  flatId: string;
+  flatId?: string;
 }
 
 export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
-  flatId,
+  flatId: propId,
 }) => {
   const router = useRouter();
+  const urlParams = useParams();
+  const flatId = propId || (urlParams?.id as string);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -402,6 +404,59 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
               />
             </div>
           </div>
+        </div>
+
+        {/* Section 2B: Flat Unit Images */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <h3 className="text-sm font-black text-[#FF4C00] uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+            <HiOutlinePhoto className="w-5 h-5" />
+            <span>Flat Unit Images</span>
+          </h3>
+
+          {/* Selected Images Preview */}
+          {formData.imageUrls.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {formData.imageUrls.map((url, idx) => (
+                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 group">
+                  <img src={url} alt={`Flat ${idx + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        imageUrls: prev.imageUrls.filter((_, i) => i !== idx),
+                      }))
+                    }
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer border-none"
+                  >
+                    <HiOutlineXMark size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setMediaPickerOpen(true)}
+            className="w-full py-3 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 text-xs font-bold hover:border-[#FF4C00] hover:text-[#FF4C00] transition cursor-pointer bg-transparent flex items-center justify-center gap-2"
+          >
+            <HiOutlinePhoto className="w-4 h-4" />
+            {formData.imageUrls.length > 0 ? "Add More Images" : "Select Images from Media Library"}
+          </button>
+
+          <MediaPickerModal
+            isOpen={mediaPickerOpen}
+            onClose={() => setMediaPickerOpen(false)}
+            folder="flats"
+            selectedUrls={formData.imageUrls}
+            onSelect={(urls) =>
+              setFormData((prev) => ({
+                ...prev,
+                imageUrls: [...new Set([...prev.imageUrls, ...urls])],
+              }))
+            }
+          />
         </div>
 
         {/* Section 3: Flat Specific Features & Amenities */}

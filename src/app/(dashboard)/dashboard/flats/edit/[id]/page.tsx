@@ -10,6 +10,6 @@ export default async function EditFlatPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const resolvedParams = await params;
+  const resolvedParams = (await params) || {};
   return <EditFlatMainView flatId={resolvedParams.id} />;
 }

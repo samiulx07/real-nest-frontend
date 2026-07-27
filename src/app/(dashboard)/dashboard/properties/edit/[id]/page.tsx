@@ -10,6 +10,6 @@ export default async function EditPropertyPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const resolvedParams = await params;
+  const resolvedParams = (await params) || {};
   return <EditPropertyMainView propertyId={resolvedParams.id} />;
 }

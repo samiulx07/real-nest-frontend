@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { toast } from "react-toastify";
@@ -44,18 +44,26 @@ const DEFAULT_PROPERTY_FEATURES = [
 ];
 
 interface EditPropertyMainViewProps {
-  propertyId: string;
+  propertyId?: string;
 }
 
 export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
-  propertyId,
+  propertyId: propId,
 }) => {
   const router = useRouter();
+  const urlParams = useParams();
+  const propertyId = propId || (urlParams?.id as string);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   const [hasGroundFloor, setHasGroundFloor] = useState(true);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+
+  const [landVal, setLandVal] = useState("5");
+  const [landUnit, setLandUnit] = useState("Katha");
+  const [roadVal, setRoadVal] = useState("30");
+  const [roadUnit, setRoadUnit] = useState("Feet");
+  const [buildingAgePreset, setBuildingAgePreset] = useState("Under Construction");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -82,6 +90,7 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
     facing: "South",
     roadSize: "30 Feet",
     totalParkingSlots: 0,
+    buildingAge: "Under Construction",
     parkingAvailable: true,
     liftAvailable: true,
     generatorBackup: true,
@@ -108,6 +117,33 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
           const labelStartsWithG = data.floorLabel ? data.floorLabel.toUpperCase().startsWith("G+") : true;
           setHasGroundFloor(labelStartsWithG);
 
+          if (data.landArea) {
+            const parts = data.landArea.trim().split(" ");
+            setLandVal(parts[0] || "");
+            setLandUnit(parts.slice(1).join(" ") || "Katha");
+          }
+
+          if (data.roadSize) {
+            const parts = data.roadSize.trim().split(" ");
+            setRoadVal(parts[0] || "");
+            setRoadUnit(parts.slice(1).join(" ") || "Feet");
+          }
+
+          const PRESETS = [
+            "Under Construction",
+            "Brand New (New Construction)",
+            "Less than 1 year",
+            "1 - 3 years",
+            "3 - 5 years",
+            "5 - 10 years",
+            "More than 10 years",
+          ];
+          if (data.buildingAge && PRESETS.includes(data.buildingAge)) {
+            setBuildingAgePreset(data.buildingAge);
+          } else if (data.buildingAge) {
+            setBuildingAgePreset("CUSTOM");
+          }
+
           setFormData({
             title: data.title || "",
             slug: data.slug || "",
@@ -133,6 +169,7 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
             facing: data.facing || "South",
             roadSize: data.roadSize || "",
             totalParkingSlots: data.totalParkingSlots || 0,
+            buildingAge: data.buildingAge || "Under Construction",
             parkingAvailable: Boolean(data.parkingAvailable),
             liftAvailable: Boolean(data.liftAvailable),
             generatorBackup: Boolean(data.generatorBackup),
@@ -369,11 +406,11 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
             <span>2. Location & Map Coordinates</span>
           </h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="sm:col-span-2">
+          <div className="space-y-4">
+            <div>
               <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
                 <LocationIcon className="w-3.5 h-3.5 text-slate-400" />
-                <span>Street Address *</span>
+                <span>Street Address / Building No. *</span>
               </label>
               <input
                 type="text"
@@ -386,40 +423,101 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
               />
             </div>
 
+            {/* Bangladesh Location Step-by-Step Selection */}
             <div>
-              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                <HiOutlineTag className="w-3.5 h-3.5 text-slate-400" />
-                <span>Area *</span>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                <HiOutlineMapPin className="w-3.5 h-3.5 text-[#FF4C00]" />
+                <span>Location (Division → District → Upazila/Thana → Union/Ward) *</span>
               </label>
-              <input
-                type="text"
-                name="area"
-                placeholder="e.g. Gulshan-2"
-                value={formData.area}
-                onChange={handleChange}
-                required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+              <BdAddressSelector
+                value={{
+                  division: formData.division,
+                  district: formData.district,
+                  upazila: formData.upazila,
+                  union: formData.union,
+                }}
+                onChange={(addr) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    division: addr.division || "",
+                    district: addr.district || "",
+                    upazila: addr.upazila || "",
+                    union: addr.union || "",
+                    city: addr.district || prev.city,
+                    area: addr.upazila || prev.area,
+                  }))
+                }
               />
             </div>
-
-            <div>
-              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                <HiOutlineGlobeAlt className="w-3.5 h-3.5 text-slate-400" />
-                <span>City</span>
-              </label>
-              <select
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white"
-              >
-                <option value="Dhaka">Dhaka</option>
-                <option value="Chittagong">Chittagong</option>
-                <option value="Sylhet">Sylhet</option>
-                <option value="Rajshahi">Rajshahi</option>
-              </select>
-            </div>
           </div>
+
+          {/* Map Picker */}
+          <div className="pt-2">
+            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+              <HiOutlineGlobeAlt className="w-3.5 h-3.5 text-[#FF4C00]" />
+              <span>Map Coordinates (Click or drag marker)</span>
+            </label>
+            <MapPicker
+              latitude={formData.latitude}
+              longitude={formData.longitude}
+              onChange={(lat, lng) =>
+                setFormData((prev) => ({ ...prev, latitude: lat, longitude: lng }))
+              }
+            />
+          </div>
+        </div>
+
+        {/* Section 2C: Property Images */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <h3 className="text-sm font-black text-[#FF4C00] uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+            <HiOutlinePhoto className="w-5 h-5" />
+            <span>Property Images</span>
+          </h3>
+
+          {/* Selected Images Preview */}
+          {formData.imageUrls.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {formData.imageUrls.map((url, idx) => (
+                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 group">
+                  <img src={url} alt={`Property ${idx + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        imageUrls: prev.imageUrls.filter((_, i) => i !== idx),
+                      }))
+                    }
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer border-none"
+                  >
+                    <HiOutlineXMark size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setMediaPickerOpen(true)}
+            className="w-full py-3 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 text-xs font-bold hover:border-[#FF4C00] hover:text-[#FF4C00] transition cursor-pointer bg-transparent flex items-center justify-center gap-2"
+          >
+            <HiOutlinePhoto className="w-4 h-4" />
+            {formData.imageUrls.length > 0 ? "Add More Images" : "Select Images from Media Library"}
+          </button>
+
+          <MediaPickerModal
+            isOpen={mediaPickerOpen}
+            onClose={() => setMediaPickerOpen(false)}
+            folder="properties"
+            selectedUrls={formData.imageUrls}
+            onSelect={(urls) =>
+              setFormData((prev) => ({
+                ...prev,
+                imageUrls: [...new Set([...prev.imageUrls, ...urls])],
+              }))
+            }
+          />
         </div>
 
         {/* Section 3: Building Specifications */}
@@ -498,6 +596,158 @@ export const EditPropertyMainView: React.FC<EditPropertyMainViewProps> = ({
                 onChange={(val) => setFormData((prev) => ({ ...prev, totalUnits: val }))}
                 placeholder="Total Units"
               />
+            </div>
+          </div>
+
+          {/* Land & Physical Attributes */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-slate-100">
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineTag className="w-3.5 h-3.5 text-slate-400" />
+                <span>Land Area</span>
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="e.g. 5"
+                  value={landVal}
+                  onChange={(e) => {
+                    setLandVal(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      landArea: `${e.target.value} ${landUnit}`.trim(),
+                    }));
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+                />
+                <select
+                  value={landUnit}
+                  onChange={(e) => {
+                    setLandUnit(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      landArea: `${landVal} ${e.target.value}`.trim(),
+                    }));
+                  }}
+                  className="px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white shrink-0"
+                >
+                  <option value="Katha">Katha</option>
+                  <option value="Decimal">Decimal</option>
+                  <option value="Bigha">Bigha</option>
+                  <option value="Sq Ft">Sq Ft</option>
+                  <option value="Acre">Acre</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineGlobeAlt className="w-3.5 h-3.5 text-slate-400" />
+                <span>Facing / Orientation</span>
+              </label>
+              <select
+                name="facing"
+                value={formData.facing || "South"}
+                onChange={handleChange}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white"
+              >
+                <option value="South">South Facing</option>
+                <option value="North">North Facing</option>
+                <option value="East">East Facing</option>
+                <option value="West">West Facing</option>
+                <option value="South-East">South-East Facing</option>
+                <option value="South-West">South-West Facing</option>
+                <option value="North-East">North-East Facing</option>
+                <option value="North-West">North-West Facing</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineTag className="w-3.5 h-3.5 text-slate-400" />
+                <span>Front Road Size</span>
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="e.g. 30"
+                  value={roadVal}
+                  onChange={(e) => {
+                    setRoadVal(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      roadSize: `${e.target.value} ${roadUnit}`.trim(),
+                    }));
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+                />
+                <select
+                  value={roadUnit}
+                  onChange={(e) => {
+                    setRoadUnit(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      roadSize: `${roadVal} ${e.target.value}`.trim(),
+                    }));
+                  }}
+                  className="px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white shrink-0"
+                >
+                  <option value="Feet">Feet</option>
+                  <option value="Feet Road">Feet Road</option>
+                  <option value="Meter">Meter</option>
+                  <option value="Meter Road">Meter Road</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineBuildingOffice2 className="w-3.5 h-3.5 text-slate-400" />
+                <span>Total Parking Slots</span>
+              </label>
+              <CreatableNumberSelect
+                value={formData.totalParkingSlots || 0}
+                onChange={(val) => setFormData((prev) => ({ ...prev, totalParkingSlots: val }))}
+                placeholder="0-50 Slots"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                <HiOutlineBuildingOffice2 className="w-3.5 h-3.5 text-slate-400" />
+                <span>Building Age / Condition</span>
+              </label>
+              <select
+                value={buildingAgePreset}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setBuildingAgePreset(val);
+                  if (val !== "CUSTOM") {
+                    setFormData((prev) => ({ ...prev, buildingAge: val }));
+                  }
+                }}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00] bg-white mb-2"
+              >
+                <option value="Under Construction">Under Construction</option>
+                <option value="Brand New (New Construction)">Brand New (New Construction)</option>
+                <option value="Less than 1 year">Less than 1 year</option>
+                <option value="1 - 3 years">1 - 3 years</option>
+                <option value="3 - 5 years">3 - 5 years</option>
+                <option value="5 - 10 years">5 - 10 years</option>
+                <option value="More than 10 years">More than 10 years</option>
+                <option value="CUSTOM">Custom...</option>
+              </select>
+
+              {buildingAgePreset === "CUSTOM" && (
+                <input
+                  type="text"
+                  name="buildingAge"
+                  placeholder="Enter custom condition e.g. 15 Years (Renovated)"
+                  value={formData.buildingAge || ""}
+                  onChange={handleChange}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
+                />
+              )}
             </div>
           </div>
         </div>
