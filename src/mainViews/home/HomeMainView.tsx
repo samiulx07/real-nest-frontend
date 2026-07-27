@@ -13,10 +13,12 @@ import instance from "@/services/baseServices";
 const HomeMainView = () => {
   const [projects, setProjects] = useState<any[]>(HOME_SEED_OBJ.featuredProjects);
   const [flats, setFlats] = useState<any[]>(HOME_SEED_OBJ.featuredFlats);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const propRes = await instance.get("/properties?limit=4");
         if (propRes.data?.success && propRes.data?.data?.length > 0) {
           setProjects(propRes.data.data);
@@ -28,6 +30,8 @@ const HomeMainView = () => {
         }
       } catch (err) {
         console.error("Failed to load homepage backend listings:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -37,8 +41,8 @@ const HomeMainView = () => {
   return (
     <div>
       <HomeBanner slides={HOME_SEED_OBJ.bannerSlides} />
-      <FeaturedProjects projects={projects} />
-      <FeaturedFlats flats={flats} />
+      <FeaturedProjects projects={projects} loading={loading} />
+      <FeaturedFlats flats={flats} loading={loading} />
       <WhyChooseUs items={HOME_SEED_OBJ.differentiators} />
       <ProjectLocations projects={HOME_SEED_OBJ.mapProjects} />
       <Faq items={HOME_SEED_OBJ.faqs} />

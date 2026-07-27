@@ -24,6 +24,7 @@ import {
 import { BiBed, BiBath, BiArea } from "react-icons/bi";
 import instance from "@/services/baseServices";
 import { useRootContext } from "@/contexts/RootContext";
+import FlatDetailsSkeleton from "@/components/skeletons/FlatDetailsSkeleton";
 
 const MapPicker = dynamic(() => import("@/components/mapPicker/MapPicker"), { ssr: false });
 
@@ -93,11 +94,7 @@ export const FlatDetailsMainView: React.FC<FlatDetailsMainViewProps> = ({
   };
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center text-sm font-bold text-slate-400">
-        Loading flat details...
-      </div>
-    );
+    return <FlatDetailsSkeleton />;
   }
 
   if (!flat) {

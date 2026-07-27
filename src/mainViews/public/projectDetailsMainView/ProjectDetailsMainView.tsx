@@ -25,6 +25,8 @@ import instance from "@/services/baseServices";
 
 const MapPicker = dynamic(() => import("@/components/mapPicker/MapPicker"), { ssr: false });
 
+import ProjectDetailsSkeleton from "@/components/skeletons/ProjectDetailsSkeleton";
+
 interface ProjectDetailsMainViewProps {
   projectId: string;
 }
@@ -33,8 +35,8 @@ export const ProjectDetailsMainView: React.FC<ProjectDetailsMainViewProps> = ({
   projectId,
 }) => {
   const [project, setProject] = useState<any>(null);
+  const [flats, setFlats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeImage, setActiveImage] = useState<string>("");
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -42,12 +44,10 @@ export const ProjectDetailsMainView: React.FC<ProjectDetailsMainViewProps> = ({
         setLoading(true);
         const res = await instance.get(`/properties/${projectId}`);
         if (res.data?.success && res.data?.data) {
-          const data = res.data.data;
-          setProject(data);
-          const firstImg =
-            (Array.isArray(data.imageUrls) && data.imageUrls[0]) ||
-            "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80";
-          setActiveImage(firstImg);
+          setProject(res.data.data);
+          if (Array.isArray(res.data.data.flats)) {
+            setFlats(res.data.data.flats);
+          }
         }
       } catch (err) {
         console.error("Failed to fetch project details:", err);
@@ -62,11 +62,7 @@ export const ProjectDetailsMainView: React.FC<ProjectDetailsMainViewProps> = ({
   }, [projectId]);
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center text-sm font-bold text-slate-400">
-        Loading project details...
-      </div>
-    );
+    return <ProjectDetailsSkeleton />;
   }
 
   if (!project) {

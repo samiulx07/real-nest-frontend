@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { FlatCard } from "@/components/flatCard/FlatCard";
+import FlatCardSkeleton from "@/components/skeletons/FlatCardSkeleton";
 import { HiOutlineHome, HiOutlineMagnifyingGlass, HiOutlineFunnel } from "react-icons/hi2";
 import instance from "@/services/baseServices";
 
@@ -139,8 +140,10 @@ export const FlatsMainView = () => {
 
         {/* Flats Grid */}
         {loading ? (
-          <div className="py-20 text-center text-sm font-bold text-slate-400">
-            Loading available flats inventory...
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <FlatCardSkeleton key={idx} />
+            ))}
           </div>
         ) : flats.length === 0 ? (
           <div className="bg-white p-16 rounded-2xl border border-dashed border-slate-300 text-center space-y-3">

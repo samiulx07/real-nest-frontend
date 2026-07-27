@@ -1,12 +1,14 @@
 import React from "react";
 import { PropertyCard } from "../propertyCard/PropertyCard";
+import PropertyCardSkeleton from "../skeletons/PropertyCardSkeleton";
 import { FeaturedProject } from "@/shared/interface";
 
 interface FeaturedProjectsProps {
   projects: FeaturedProject[];
+  loading?: boolean;
 }
 
-const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ projects }) => {
+const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ projects, loading }) => {
   return (
     <section className="section bg-white">
       <div className="container">
@@ -22,9 +24,13 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ projects }) => {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {projects.map((project) => (
-            <PropertyCard key={project.id} project={project} />
-          ))}
+          {loading
+            ? Array.from({ length: 4 }).map((_, idx) => (
+                <PropertyCardSkeleton key={idx} />
+              ))
+            : projects.map((project) => (
+                <PropertyCard key={project.id} project={project} />
+              ))}
         </div>
       </div>
     </section>

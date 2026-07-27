@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { PropertyCard } from "@/components/propertyCard/PropertyCard";
+import PropertyCardSkeleton from "@/components/skeletons/PropertyCardSkeleton";
 import { HiOutlineBuildingOffice2, HiOutlineMagnifyingGlass, HiOutlineFunnel } from "react-icons/hi2";
 import instance from "@/services/baseServices";
 
@@ -125,8 +126,10 @@ export const ProjectsMainView = () => {
 
         {/* Projects Grid */}
         {loading ? (
-          <div className="py-20 text-center text-sm font-bold text-slate-400">
-            Loading building projects directory...
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <PropertyCardSkeleton key={idx} />
+            ))}
           </div>
         ) : projects.length === 0 ? (
           <div className="bg-white p-16 rounded-2xl border border-dashed border-slate-300 text-center space-y-3">

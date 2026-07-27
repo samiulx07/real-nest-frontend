@@ -1,18 +1,17 @@
 import React from "react";
 import Link from "next/link";
 import { FlatCard } from "../flatCard/FlatCard";
+import FlatCardSkeleton from "../skeletons/FlatCardSkeleton";
 
 import { FeaturedFlat } from "@/shared/interface";
-import { MdOutlineStars } from "react-icons/md";
 import { IoChevronForward } from "react-icons/io5";
-import Button from "../button/Button";
-import { BUTTON_VARIANT_ENUM } from "@/shared/enums";
 
 interface FeaturedFlatsProps {
   flats: FeaturedFlat[];
+  loading?: boolean;
 }
 
-const FeaturedFlats: React.FC<FeaturedFlatsProps> = ({ flats }) => {
+const FeaturedFlats: React.FC<FeaturedFlatsProps> = ({ flats, loading }) => {
   return (
     <section className="section bg-[#fafbfc]">
       <div className="container">
@@ -29,9 +28,13 @@ const FeaturedFlats: React.FC<FeaturedFlatsProps> = ({ flats }) => {
 
         {/* 2-Column responsive grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-          {flats.map((flat) => (
-            <FlatCard key={flat.id} flat={flat} />
-          ))}
+          {loading
+            ? Array.from({ length: 4 }).map((_, idx) => (
+                <FlatCardSkeleton key={idx} />
+              ))
+            : flats.map((flat) => (
+                <FlatCard key={flat.id} flat={flat} />
+              ))}
         </div>
 
         {/* Center Bottom CTA */}
