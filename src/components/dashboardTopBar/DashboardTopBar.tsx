@@ -12,6 +12,9 @@ import {
   HiOutlineShieldCheck,
 } from "react-icons/hi2";
 
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 interface DashboardTopBarProps {
   onToggleSidebar: () => void;
 }
@@ -20,7 +23,7 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({
   onToggleSidebar,
 }) => {
   const pathname = usePathname();
-  const { user } = useRootContext();
+  const { user, authLoading } = useRootContext();
 
   const getTitle = () => {
     if (pathname.includes("/properties/create")) return "Add New Property";
@@ -89,14 +92,23 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({
         <div className="h-6 w-px bg-slate-200 hidden sm:block" />
 
         {/* User Pill */}
-        <div className="flex items-center gap-2.5 bg-slate-50 border border-slate-200/80 p-1.5 pl-2.5 rounded-full">
-          <div className="w-7 h-7 rounded-full bg-[#FF4C00]/10 text-[#FF4C00] font-black text-xs flex items-center justify-center">
-            {user?.fullName?.charAt(0).toUpperCase() || <HiOutlineUser />}
-          </div>
-          <span className="hidden md:inline text-xs font-bold text-[#00062A] pr-2 max-w-[120px] truncate">
-            {user?.fullName || "User Profile"}
-          </span>
-        </div>
+        <SkeletonTheme baseColor="#f1f5f9" highlightColor="#e2e8f0">
+          {authLoading ? (
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/80 p-1.5 pl-2.5 rounded-full">
+              <Skeleton circle height={28} width={28} />
+              <Skeleton height={14} width={70} borderRadius={6} className="hidden md:inline" />
+            </div>
+          ) : (
+            <div className="flex items-center gap-2.5 bg-slate-50 border border-slate-200/80 p-1.5 pl-2.5 rounded-full">
+              <div className="w-7 h-7 rounded-full bg-[#FF4C00]/10 text-[#FF4C00] font-black text-xs flex items-center justify-center">
+                {user?.fullName?.charAt(0).toUpperCase() || <HiOutlineUser />}
+              </div>
+              <span className="hidden md:inline text-xs font-bold text-[#00062A] pr-2 max-w-[120px] truncate">
+                {user?.fullName ? user.fullName.split(" ")[0] : "User Profile"}
+              </span>
+            </div>
+          )}
+        </SkeletonTheme>
 
 
       </div>
