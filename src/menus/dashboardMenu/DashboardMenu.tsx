@@ -48,6 +48,12 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, onClose }) => {
       roles: ["SUPER_ADMIN", "ADMIN", "STAFF"],
     },
     {
+      name: "Bookings",
+      href: "/dashboard/bookings",
+      icon: HiOutlineBookmark,
+      roles: ["SUPER_ADMIN", "ADMIN", "STAFF"],
+    },
+    {
       name: "Media Library",
       href: "/dashboard/media",
       icon: HiOutlinePhoto,

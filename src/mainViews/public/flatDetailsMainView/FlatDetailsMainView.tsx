@@ -25,6 +25,7 @@ import { BiBed, BiBath, BiArea } from "react-icons/bi";
 import instance from "@/services/baseServices";
 import { useRootContext } from "@/contexts/RootContext";
 import FlatDetailsSkeleton from "@/components/skeletons/FlatDetailsSkeleton";
+import BookingModal from "@/components/bookingModal/BookingModal";
 
 const MapPicker = dynamic(() => import("@/components/mapPicker/MapPicker"), { ssr: false });
 
@@ -175,9 +176,10 @@ export const FlatDetailsMainView: React.FC<FlatDetailsMainViewProps> = ({
               {flat.status === "AVAILABLE" && (
                 <button
                   onClick={() => setBookingModalOpen(true)}
-                  className="px-6 py-4 rounded-2xl bg-[#FF4C00] hover:bg-[#e04300] text-white text-xs font-black shadow-lg shadow-[#FF4C00]/20 transition cursor-pointer border-none uppercase tracking-wider"
+                  className="px-6 py-4 rounded-2xl bg-[#FF4C00] hover:bg-[#e04300] text-white text-xs font-black shadow-lg shadow-[#FF4C00]/20 transition cursor-pointer border-none uppercase tracking-wider flex items-center gap-1.5"
                 >
-                  Book This Flat
+                  <HiOutlineHome className="w-4 h-4" />
+                  <span>Book Now</span>
                 </button>
               )}
             </div>
@@ -401,19 +403,26 @@ export const FlatDetailsMainView: React.FC<FlatDetailsMainViewProps> = ({
               </div>
             )}
 
-            {/* Sales Contact Box */}
+            {/* Sales Contact & Reservation Box */}
             <div className="bg-[#00062A] text-white p-6 rounded-2xl space-y-4">
-              <h4 className="text-base font-extrabold text-white">Book or Schedule a Visit</h4>
+              <h4 className="text-base font-extrabold text-white">Book or Reserve Unit</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Contact our customer support team to schedule a physical unit walkthrough or request installment schedules.
+                Reserve this flat unit now with instant SSLCommerz online payment or bank transfer.
               </p>
               <div className="space-y-2 pt-1 text-xs">
+                <button
+                  onClick={() => setBookingModalOpen(true)}
+                  className="w-full py-3 rounded-xl bg-[#FF4C00] hover:bg-[#e04300] text-white font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-[#FF4C00]/20 transition cursor-pointer border-none uppercase tracking-wider"
+                >
+                  <HiOutlineHome className="w-5 h-5" />
+                  <span>Book Now</span>
+                </button>
                 <a
                   href="tel:+8801700000000"
-                  className="flex items-center gap-2.5 p-3 rounded-xl bg-white/10 hover:bg-[#FF4C00] text-white font-bold transition no-underline"
+                  className="flex items-center justify-center gap-2.5 p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition no-underline"
                 >
-                  <HiOutlinePhone className="w-4 h-4 text-[#FF4C00] group-hover:text-white" />
-                  <span>Call Hotline: +880 1700-000000</span>
+                  <HiOutlinePhone className="w-4 h-4 text-slate-300" />
+                  <span>Hotline: +880 1700-000000</span>
                 </a>
               </div>
             </div>
@@ -422,90 +431,11 @@ export const FlatDetailsMainView: React.FC<FlatDetailsMainViewProps> = ({
       </div>
 
       {/* Booking Modal */}
-      {bookingModalOpen && (
-        <div className="fixed inset-0 z-50 bg-[#00062A]/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-4 relative animate-in fade-in zoom-in duration-200">
-            <button
-              onClick={() => setBookingModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-[#00062A] cursor-pointer border-none bg-transparent"
-            >
-              <HiXMark className="w-6 h-6" />
-            </button>
-
-            <div className="border-b border-slate-100 pb-3">
-              <span className="text-[10px] font-extrabold text-[#FF4C00] uppercase tracking-wider">
-                Booking Request
-              </span>
-              <h3 className="text-xl font-black text-[#00062A] mt-0.5">
-                Reserve Flat {flat.flatNumber}
-              </h3>
-              <p className="text-xs text-slate-500 mt-1">
-                {property.title} ({property.area}, {property.city}) — ৳ {Number(flat.price).toLocaleString()}
-              </p>
-            </div>
-
-            <form onSubmit={handleBookingSubmit} className="space-y-4">
-              <div>
-                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
-                  Your Full Name *
-                </label>
-                <input
-                  type="text"
-                  value={bookingForm.fullName}
-                  onChange={(e) => setBookingForm((prev) => ({ ...prev, fullName: e.target.value }))}
-                  required
-                  placeholder="e.g. Samiul Hasan"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00]"
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
-                  Contact Phone Number *
-                </label>
-                <input
-                  type="text"
-                  value={bookingForm.contactNo}
-                  onChange={(e) => setBookingForm((prev) => ({ ...prev, contactNo: e.target.value }))}
-                  required
-                  placeholder="+880 1700-000000"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold focus:outline-none focus:border-[#FF4C00]"
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
-                  Booking Note / Inquiries
-                </label>
-                <textarea
-                  rows={3}
-                  value={bookingForm.note}
-                  onChange={(e) => setBookingForm((prev) => ({ ...prev, note: e.target.value }))}
-                  placeholder="Optional message regarding payment plan or site visit..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#FF4C00]"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setBookingModalOpen(false)}
-                  className="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-100 transition cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={bookingSubmitting}
-                  className="px-6 py-2.5 rounded-xl bg-[#FF4C00] hover:bg-[#e04300] text-white text-xs font-extrabold shadow-md shadow-[#FF4C00]/20 transition disabled:opacity-50 cursor-pointer border-none"
-                >
-                  {bookingSubmitting ? "Submitting..." : "Confirm Booking Request"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <BookingModal
+        flat={{ ...flat, property }}
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+      />
     </div>
   );
 };
