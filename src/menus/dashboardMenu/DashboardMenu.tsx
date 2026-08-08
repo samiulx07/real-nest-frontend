@@ -66,15 +66,9 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, onClose }) => {
       roles: ["CUSTOMER"],
     },
     {
-      name: "Billing",
+      name: "Billing & Invoices",
       href: "/dashboard/billing",
       icon: HiOutlineDocumentText,
-      roles: ["CUSTOMER"],
-    },
-    {
-      name: "Payments",
-      href: "/dashboard/payments",
-      icon: HiOutlineCreditCard,
       roles: ["CUSTOMER"],
     },
     {

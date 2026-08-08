@@ -285,23 +285,73 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             {/* Step 3: Payment Breakdown & Transaction Fields */}
             <div className="space-y-3">
               <label className="text-xs font-black text-[#00062A] uppercase tracking-wider block">
-                3. Payment Details
+                3. Payment Details & Financial Breakdown
               </label>
+
+              {/* Financial Calculation Banner */}
+              <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 space-y-3">
+                <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                  <div className="bg-white p-2.5 rounded-xl border border-slate-200/60">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase block">Total Unit Price</span>
+                    <strong className="text-[#00062A] text-xs sm:text-sm font-black">
+                      ৳ {flat.price ? Number(flat.price).toLocaleString() : "0"}
+                    </strong>
+                  </div>
+
+                  <div className="bg-[#FF4C00]/10 p-2.5 rounded-xl border border-[#FF4C00]/20">
+                    <span className="text-[9px] font-bold text-[#FF4C00] uppercase block">Paying Now</span>
+                    <strong className="text-[#FF4C00] text-xs sm:text-sm font-black">
+                      ৳ {Number(bookingAmount || 0).toLocaleString()}
+                    </strong>
+                  </div>
+
+                  <div className="bg-white p-2.5 rounded-xl border border-slate-200/60">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase block">Remaining Balance</span>
+                    <strong className="text-slate-700 text-xs sm:text-sm font-black">
+                      ৳ {Math.max(0, (flat.price || 0) - (bookingAmount || 0)).toLocaleString()}
+                    </strong>
+                  </div>
+                </div>
+
+                {/* Quick Presets */}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <span className="text-[10px] font-bold text-slate-500">Quick Select:</span>
+                  <button
+                    type="button"
+                    onClick={() => setBookingAmount(Math.round((flat.price || 0) * 0.1))}
+                    className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-[#FF4C00] text-[#FF4C00] text-[10px] font-bold transition cursor-pointer"
+                  >
+                    10% Token (৳ {Math.round((flat.price || 0) * 0.1).toLocaleString()})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBookingAmount(Math.round((flat.price || 0) * 0.25))}
+                    className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-[#FF4C00] text-slate-700 text-[10px] font-bold transition cursor-pointer"
+                  >
+                    25% Deposit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBookingAmount(flat.price || 0)}
+                    className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-[#FF4C00] text-emerald-600 text-[10px] font-bold transition cursor-pointer"
+                  >
+                    100% Full Payment
+                  </button>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-bold text-slate-600 mb-1 block">Downpayment Amount (৳) *</label>
+                  <label className="text-[11px] font-bold text-slate-600 mb-1 block">Deposit / Downpayment Amount (৳) *</label>
                   <input
                     type="number"
                     required
                     min={1000}
+                    max={flat.price || 999999999}
                     value={bookingAmount}
                     onChange={(e) => setBookingAmount(Number(e.target.value))}
                     className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 font-bold text-[#FF4C00] focus:outline-none focus:border-[#FF4C00]"
                   />
-                  <span className="text-[10px] text-slate-400 mt-0.5 block">
-                    Total Flat Price: ৳ {flat.price ? Number(flat.price).toLocaleString() : "0"}
-                  </span>
                 </div>
 
                 {paymentMethod !== "SSLCOMMERZ" && (

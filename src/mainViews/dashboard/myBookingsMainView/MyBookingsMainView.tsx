@@ -189,9 +189,23 @@ export const MyBookingsMainView = () => {
                     {/* Payment Info */}
                     <div className="border-t border-slate-100 pt-3 space-y-2 text-xs">
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-500 font-medium">Downpayment:</span>
+                        <span className="text-slate-500 font-medium">Total Agreed Price:</span>
+                        <strong className="text-[#00062A] font-black">
+                          ৳ {Number(flat.price || booking.bookingAmount).toLocaleString()}
+                        </strong>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-500 font-medium">Total Verified Paid:</span>
+                        <strong className="text-emerald-600 font-black">
+                          ৳ {booking.paymentStatus === "VALIDATED" ? Number(booking.paidAmount || booking.bookingAmount).toLocaleString() : "0 (Pending)"}
+                        </strong>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-500 font-medium">Remaining Balance Due:</span>
                         <strong className="text-[#FF4C00] font-black">
-                          ৳ {Number(booking.bookingAmount).toLocaleString()}
+                          ৳ {Math.max(0, Number(flat.price || booking.bookingAmount) - (booking.paymentStatus === "VALIDATED" ? Number(booking.paidAmount || booking.bookingAmount) : 0)).toLocaleString()}
                         </strong>
                       </div>
 

@@ -141,12 +141,12 @@ export const DashboardMainView = () => {
           </div>
         </div>
 
-        {/* Customer Top 4 Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Customer Top 3 Stat Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* My Bookings */}
           <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">My Reservations</span>
+              <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">My Bookings</span>
               <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <HiOutlineTicket className="w-5 h-5" />
               </div>
@@ -183,20 +183,6 @@ export const DashboardMainView = () => {
               {loading ? "..." : summary?.pendingPaymentsCount || 0}
             </div>
             <p className="text-[11px] text-slate-400 font-medium">Payment slips awaiting admin verification</p>
-          </div>
-
-          {/* Account Status */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Account Role</span>
-              <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                <HiOutlineHome className="w-5 h-5" />
-              </div>
-            </div>
-            <div className="text-lg font-black text-[#00062A] uppercase">
-              {user?.role || "CUSTOMER"}
-            </div>
-            <p className="text-[11px] text-emerald-600 font-bold">Verified Real Nest Customer</p>
           </div>
         </div>
 

@@ -87,48 +87,6 @@ export const BillingMainView = () => {
         </div>
       </div>
 
-      {/* Installment Progress Tracker Card */}
-      {bookings.length > 0 && (
-        <div className="bg-[#00062A] text-white p-6 sm:p-8 rounded-3xl shadow-lg space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <HiOutlineSparkles className="w-5 h-5 text-[#FF4C00]" />
-              <h3 className="text-base font-extrabold text-white">Overall Installment Progress</h3>
-            </div>
-            <span className="bg-[#FF4C00] text-white text-xs font-black px-3.5 py-1 rounded-full">
-              {progressPercent}% Paid
-            </span>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="w-full bg-white/10 h-3.5 rounded-full overflow-hidden p-0.5">
-            <div
-              className="bg-[#FF4C00] h-full rounded-full transition-all duration-1000 shadow-md shadow-[#FF4C00]/40"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
-            <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Total Agreed Price</span>
-              <strong className="text-lg font-black text-white">৳ {totalAgreedPrice.toLocaleString()}</strong>
-            </div>
-
-            <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Total Verified Paid</span>
-              <strong className="text-lg font-black text-emerald-400">৳ {totalPaidAmount.toLocaleString()}</strong>
-            </div>
-
-            <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Remaining Balance Due</span>
-              <strong className="text-lg font-black text-[#FF4C00]">
-                ৳ {Math.max(0, totalAgreedPrice - totalPaidAmount).toLocaleString()}
-              </strong>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Invoices List */}
       {loading ? (
         <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center text-xs font-bold text-slate-400">

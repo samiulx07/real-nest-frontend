@@ -175,14 +175,7 @@ export default function PublicHeaderMenu() {
                               className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline"
                             >
                               <FiFileText className="text-gray-400 text-sm" />
-                              Billing
-                            </Link>
-                            <Link
-                              href="/dashboard/payments"
-                              className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-secondary hover:bg-gray-50 hover:text-primary transition-colors no-underline"
-                            >
-                              <FiCreditCard className="text-gray-400 text-sm" />
-                              Payments
+                              Billing & Invoices
                             </Link>
                             <Link
                               href="/dashboard/support"
