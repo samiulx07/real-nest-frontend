@@ -251,9 +251,11 @@ export const FlatDetailsMainView: React.FC<FlatDetailsMainViewProps> = ({
                 <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100">
                   <span className="text-slate-500 font-bold flex items-center gap-2">
                     <HiOutlineHome className="w-4 h-4 text-[#FF4C00]" />
-                    Kitchens
+                    Kitchen Facility
                   </span>
-                  <span className="font-extrabold text-[#00062A]">{flat.kitchens || 1}</span>
+                  <span className="font-extrabold text-[#00062A]">
+                    {flat.kitchens ? "Available" : "No Kitchen (Commercial)"}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100">

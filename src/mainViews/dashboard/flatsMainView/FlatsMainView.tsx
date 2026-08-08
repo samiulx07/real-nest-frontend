@@ -247,7 +247,7 @@ export const FlatsMainView = () => {
                         {f.beds} Beds • {f.baths} Baths
                       </div>
                       <div className="text-[11px] text-slate-400">
-                        {f.kitchens} Kitchen • {f.balconies} Balconies
+                        {f.kitchens ? "1 Kitchen" : "No Kitchen"} • {f.balconies} Balconies
                       </div>
                     </td>
 
