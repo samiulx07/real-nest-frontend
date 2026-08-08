@@ -62,6 +62,7 @@ export const CreateFlatMainView = () => {
   const [submitting, setSubmitting] = useState(false);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
+
   const [flatCategory, setFlatCategory] = useState("Luxury Suite");
   const [customCategory, setCustomCategory] = useState("");
   const [unitSuffix, setUnitSuffix] = useState("A");
@@ -619,6 +620,67 @@ export const CreateFlatMainView = () => {
               </label>
             </div>
           </div>
+        </div>
+
+        {/* Section 2B: Flat Unit Images */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 className="text-sm font-black text-[#FF4C00] uppercase tracking-wider flex items-center gap-2">
+              <HiOutlinePhoto className="w-5 h-5" />
+              <span>Flat Unit Images ({formData.imageUrls.length})</span>
+            </h3>
+          </div>
+
+          {/* Selected Images Preview */}
+          {formData.imageUrls.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {formData.imageUrls.map((url, idx) => (
+                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 group bg-slate-50">
+                  <img src={url} alt={`Flat image ${idx + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        imageUrls: prev.imageUrls.filter((_, i) => i !== idx),
+                      }))
+                    }
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer border-none shadow-md"
+                    title="Remove image"
+                  >
+                    <HiOutlineXMark size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-xs font-semibold text-slate-400 border border-dashed border-slate-200 rounded-xl space-y-2">
+              <HiOutlinePhoto className="w-8 h-8 text-slate-300 mx-auto" />
+              <p>No images selected for this flat yet.</p>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setMediaPickerOpen(true)}
+            className="w-full py-3.5 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#FF4C00] text-slate-600 hover:text-[#FF4C00] text-xs font-bold transition cursor-pointer bg-slate-50 hover:bg-[#FF4C00]/5 flex items-center justify-center gap-2"
+          >
+            <HiOutlinePhoto className="w-4 h-4" />
+            <span>{formData.imageUrls.length > 0 ? "Add / Change Images from Media Library" : "Select Images from Media Library"}</span>
+          </button>
+
+          <MediaPickerModal
+            isOpen={mediaPickerOpen}
+            onClose={() => setMediaPickerOpen(false)}
+            folder="flats"
+            selectedUrls={formData.imageUrls}
+            onSelect={(urls) =>
+              setFormData((prev) => ({
+                ...prev,
+                imageUrls: [...new Set([...prev.imageUrls, ...urls])],
+              }))
+            }
+          />
         </div>
 
         {/* Section 3: Flat Specific Features & Amenities */}

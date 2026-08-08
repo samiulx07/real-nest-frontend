@@ -159,7 +159,13 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
             hasWaterSupply: data.hasWaterSupply !== undefined ? Boolean(data.hasWaterSupply) : true,
             completionDate: data.completionDate ? data.completionDate.split("T")[0] : "",
             description: data.description || "",
-            imageUrls: Array.isArray(data.imageUrls) ? data.imageUrls : [],
+            imageUrls: Array.isArray(data.imageUrls)
+              ? data.imageUrls
+              : typeof data.imageUrls === "string" && data.imageUrls.trim()
+              ? [data.imageUrls]
+              : data.image
+              ? [data.image]
+              : [],
             amenities: Array.isArray(data.amenities) ? data.amenities : [],
             isFeatured: Boolean(data.isFeatured),
             isPublished: Boolean(data.isPublished),
@@ -665,17 +671,19 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
 
         {/* Section 2B: Flat Unit Images */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
-          <h3 className="text-sm font-black text-[#FF4C00] uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-            <HiOutlinePhoto className="w-5 h-5" />
-            <span>Flat Unit Images</span>
-          </h3>
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 className="text-sm font-black text-[#FF4C00] uppercase tracking-wider flex items-center gap-2">
+              <HiOutlinePhoto className="w-5 h-5" />
+              <span>Flat Unit Images ({formData.imageUrls.length})</span>
+            </h3>
+          </div>
 
-          {/* Selected Images Preview */}
-          {formData.imageUrls.length > 0 && (
+          {/* Selected & Previously Uploaded Images Preview */}
+          {formData.imageUrls.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {formData.imageUrls.map((url, idx) => (
-                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 group">
-                  <img src={url} alt={`Flat ${idx + 1}`} className="w-full h-full object-cover" />
+                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 group bg-slate-50">
+                  <img src={url} alt={`Flat image ${idx + 1}`} className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() =>
@@ -684,22 +692,28 @@ export const EditFlatMainView: React.FC<EditFlatMainViewProps> = ({
                         imageUrls: prev.imageUrls.filter((_, i) => i !== idx),
                       }))
                     }
-                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer border-none"
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer border-none shadow-md"
+                    title="Remove image"
                   >
                     <HiOutlineXMark size={14} />
                   </button>
                 </div>
               ))}
             </div>
+          ) : (
+            <div className="py-8 text-center text-xs font-semibold text-slate-400 border border-dashed border-slate-200 rounded-xl space-y-2">
+              <HiOutlinePhoto className="w-8 h-8 text-slate-300 mx-auto" />
+              <p>No images selected for this flat yet.</p>
+            </div>
           )}
 
           <button
             type="button"
             onClick={() => setMediaPickerOpen(true)}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 text-xs font-bold hover:border-[#FF4C00] hover:text-[#FF4C00] transition cursor-pointer bg-transparent flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#FF4C00] text-slate-600 hover:text-[#FF4C00] text-xs font-bold transition cursor-pointer bg-slate-50 hover:bg-[#FF4C00]/5 flex items-center justify-center gap-2"
           >
             <HiOutlinePhoto className="w-4 h-4" />
-            {formData.imageUrls.length > 0 ? "Add More Images" : "Select Images from Media Library"}
+            <span>{formData.imageUrls.length > 0 ? "Add / Change Images from Media Library" : "Select Images from Media Library"}</span>
           </button>
 
           <MediaPickerModal

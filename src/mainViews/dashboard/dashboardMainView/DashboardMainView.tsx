@@ -15,6 +15,10 @@ import {
   HiOutlineXMark,
   HiOutlineArrowTopRightOnSquare,
   HiOutlineSquares2X2,
+  HiOutlineCreditCard,
+  HiOutlineSparkles,
+  HiOutlineArrowRight,
+  HiOutlineMagnifyingGlass,
 } from "react-icons/hi2";
 
 export const DashboardMainView = () => {
@@ -23,6 +27,8 @@ export const DashboardMainView = () => {
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
+  const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "ADMIN" || user?.role === "STAFF";
+
   const fetchSummary = async () => {
     try {
       setLoading(true);
@@ -30,16 +36,20 @@ export const DashboardMainView = () => {
       if (res.data?.success) {
         setSummary(res.data.data);
       }
-    } catch (err) {
-      console.error("Failed to fetch dashboard summary:", err);
+    } catch (err: any) {
+      if (err?.response?.status !== 401) {
+        console.error("Failed to fetch dashboard summary:", err);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchSummary();
-  }, []);
+    if (user) {
+      fetchSummary();
+    }
+  }, [user]);
 
   const handleApprove = async (paymentId: string) => {
     const confirm = await Swal.fire({
@@ -95,6 +105,190 @@ export const DashboardMainView = () => {
     }
   };
 
+  // ─── 1. CUSTOMER / NORMAL USER DASHBOARD ─────────────────────────
+  if (!isAdmin) {
+    return (
+      <div className="space-y-6 pb-12">
+        {/* Customer Header Banner */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-[#FF4C00] text-xs font-black uppercase tracking-wider mb-1">
+              <HiOutlineSparkles className="w-4 h-4" />
+              <span>Customer Portal</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-[#00062A] tracking-tight">
+              Welcome, {user?.fullName || "Valued Customer"}! 👋
+            </h2>
+            <p className="text-xs text-slate-500 font-medium mt-1">
+              Manage your flat reservations, payment receipts, and property inquiries.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Link
+              href="/flats"
+              className="inline-flex items-center gap-1.5 bg-[#FF4C00] hover:bg-[#e04300] text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors shadow-xs"
+            >
+              <HiOutlineMagnifyingGlass className="w-4 h-4" />
+              <span>Browse Available Flats</span>
+            </Link>
+            <Link
+              href="/dashboard/my-bookings"
+              className="inline-flex items-center gap-1.5 bg-[#00062A] hover:bg-[#00041f] text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors shadow-xs"
+            >
+              <span>My Bookings</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Customer Top 4 Stat Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* My Bookings */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">My Reservations</span>
+              <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <HiOutlineTicket className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="text-2xl font-black text-[#00062A]">
+              {loading ? "..." : summary?.myBookingsCount || 0}
+            </div>
+            <p className="text-[11px] text-slate-400 font-medium">Flat units reserved or booked</p>
+          </div>
+
+          {/* Paid Amount */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Validated Payments</span>
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <HiOutlineCreditCard className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="text-2xl font-black text-[#00062A]">
+              ৳{loading ? "..." : (summary?.totalPaidAmount || 0).toLocaleString()}
+            </div>
+            <p className="text-[11px] text-slate-400 font-medium">Verified deposit payments</p>
+          </div>
+
+          {/* Pending Approval */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Pending Review</span>
+              <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                <HiOutlineClock className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="text-2xl font-black text-[#00062A]">
+              {loading ? "..." : summary?.pendingPaymentsCount || 0}
+            </div>
+            <p className="text-[11px] text-slate-400 font-medium">Payment slips awaiting admin verification</p>
+          </div>
+
+          {/* Account Status */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Account Role</span>
+              <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                <HiOutlineHome className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="text-lg font-black text-[#00062A] uppercase">
+              {user?.role || "CUSTOMER"}
+            </div>
+            <p className="text-[11px] text-emerald-600 font-bold">Verified Real Nest Customer</p>
+          </div>
+        </div>
+
+        {/* Customer Recent Bookings Table */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div className="p-4 bg-slate-50/70 border-b border-slate-200/80 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <HiOutlineTicket className="w-4 h-4 text-[#FF4C00]" />
+              <h3 className="text-sm font-black text-[#00062A]">My Recent Flat Reservations</h3>
+            </div>
+            <Link
+              href="/dashboard/my-bookings"
+              className="text-xs font-bold text-[#FF4C00] hover:underline flex items-center gap-1"
+            >
+              <span>View All Bookings</span>
+              <HiOutlineArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="p-4 overflow-x-auto">
+            {loading ? (
+              <div className="py-8 text-center text-xs text-slate-400 font-bold">
+                Loading your booking history...
+              </div>
+            ) : !summary?.myRecentBookings?.length ? (
+              <div className="py-12 text-center space-y-3">
+                <HiOutlineHome className="w-10 h-10 text-slate-300 mx-auto" />
+                <h4 className="text-sm font-bold text-[#00062A]">No Flat Bookings Yet</h4>
+                <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                  Explore our luxury flat collection and reserve your dream home today.
+                </p>
+                <Link
+                  href="/flats"
+                  className="inline-flex items-center gap-1.5 bg-[#FF4C00] text-white text-xs font-bold px-4 py-2 rounded-xl"
+                >
+                  Browse Flat Directory
+                </Link>
+              </div>
+            ) : (
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-100 text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
+                    <th className="pb-2.5">Booking #</th>
+                    <th className="pb-2.5">Flat & Building</th>
+                    <th className="pb-2.5">Agreed Amount</th>
+                    <th className="pb-2.5">Payment Method</th>
+                    <th className="pb-2.5 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
+                  {summary.myRecentBookings.map((b: any) => (
+                    <tr key={b.id} className="hover:bg-slate-50/50">
+                      <td className="py-3 pr-2 font-mono font-black text-[#00062A]">
+                        {b.bookingNumber}
+                      </td>
+                      <td className="py-3 px-1">
+                        <div className="font-bold text-[#00062A]">{b.flat?.title || "Flat Unit"}</div>
+                        <div className="text-[10px] text-slate-400">{b.flat?.property?.title || "Real Nest Property"}</div>
+                      </td>
+                      <td className="py-3 px-1 font-black text-[#00062A]">
+                        ৳{b.bookingAmount?.toLocaleString()}
+                      </td>
+                      <td className="py-3 px-1">
+                        <span className="inline-block px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-bold uppercase">
+                          {b.payments?.[0]?.paymentMethod || "SSLCOMMERZ"}
+                        </span>
+                      </td>
+                      <td className="py-3 pl-2 text-right">
+                        <span
+                          className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                            b.status === "CONFIRMED"
+                              ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                              : b.status === "PENDING"
+                              ? "bg-amber-100 text-amber-800 border border-amber-200"
+                              : "bg-rose-100 text-rose-800 border border-rose-200"
+                          }`}
+                        >
+                          {b.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── 2. ADMIN DASHBOARD OVERVIEW ─────────────────────────────────
   return (
     <div className="space-y-6 pb-12">
       {/* Header Banner */}
@@ -203,116 +397,9 @@ export const DashboardMainView = () => {
         </div>
       </div>
 
-      {/* Two Main Tables Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Card: Payment Approval Desk */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col">
-          <div className="p-4 bg-slate-50/70 border-b border-slate-200/80 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <HiOutlineClock className="w-4 h-4 text-amber-500" />
-              <h3 className="text-sm font-black text-[#00062A]">Payment Approvals Desk</h3>
-            </div>
-            <Link
-              href="/dashboard/payments"
-              className="text-xs font-bold text-[#FF4C00] hover:underline"
-            >
-              View All
-            </Link>
-          </div>
-
-          <div className="p-4 flex-1 overflow-x-auto">
-            {loading ? (
-              <div className="py-8 text-center text-xs text-slate-400 font-bold">
-                Loading payment records...
-              </div>
-            ) : !summary?.recentPayments?.length ? (
-              <div className="py-8 text-center text-xs text-slate-400 font-medium">
-                No payment transactions found.
-              </div>
-            ) : (
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-slate-100 text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
-                    <th className="pb-2.5">Customer</th>
-                    <th className="pb-2.5">Method</th>
-                    <th className="pb-2.5">Amount</th>
-                    <th className="pb-2.5">Receipt</th>
-                    <th className="pb-2.5 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
-                  {summary.recentPayments.map((p: any) => (
-                    <tr key={p.id} className="hover:bg-slate-50/50">
-                      <td className="py-3 pr-2">
-                        <div className="font-bold text-[#00062A]">{p.user?.fullName || "Customer"}</div>
-                        <div className="text-[10px] text-slate-400">{p.user?.phone || p.user?.email}</div>
-                      </td>
-                      <td className="py-3 px-1">
-                        <span className="inline-block px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-bold uppercase">
-                          {p.paymentMethod}
-                        </span>
-                      </td>
-                      <td className="py-3 px-1 font-black text-[#00062A]">
-                        ৳{p.amount?.toLocaleString()}
-                      </td>
-                      <td className="py-3 px-1">
-                        {p.receiptUrl ? (
-                          <a
-                            href={p.receiptUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[#FF4C00] font-bold text-[11px] hover:underline"
-                          >
-                            <span>View Slip</span>
-                            <HiOutlineArrowTopRightOnSquare className="w-3 h-3" />
-                          </a>
-                        ) : (
-                          <span className="text-slate-400 text-[11px]">N/A</span>
-                        )}
-                      </td>
-                      <td className="py-3 pl-2 text-right">
-                        {p.status === "PENDING_APPROVAL" ? (
-                          <div className="inline-flex items-center gap-1">
-                            <button
-                              disabled={processingId === p.id}
-                              onClick={() => handleApprove(p.id)}
-                              className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors disabled:opacity-50"
-                              title="Approve Payment"
-                            >
-                              <HiOutlineCheck className="w-4 h-4 stroke-[2.5]" />
-                            </button>
-                            <button
-                              disabled={processingId === p.id}
-                              onClick={() => handleReject(p.id)}
-                              className="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors disabled:opacity-50"
-                              title="Reject Payment"
-                            >
-                              <HiOutlineXMark className="w-4 h-4 stroke-[2.5]" />
-                            </button>
-                          </div>
-                        ) : (
-                          <span
-                            className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${
-                              p.status === "VALIDATED"
-                                ? "bg-emerald-100 text-emerald-800"
-                                : p.status === "REJECTED"
-                                ? "bg-rose-100 text-rose-800"
-                                : "bg-slate-100 text-slate-700"
-                            }`}
-                          >
-                            {p.status}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-
-        {/* Right Card: Recent Flat Inventory Status */}
+      {/* Main Table: Recent Flat Inventory Overview */}
+      <div className="grid grid-cols-1 gap-6">
+        {/* Recent Flat Inventory Status */}
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col">
           <div className="p-4 bg-slate-50/70 border-b border-slate-200/80 flex items-center justify-between">
             <div className="flex items-center gap-2">
