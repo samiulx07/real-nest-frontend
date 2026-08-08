@@ -121,7 +121,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ isOpen, onClose }) => {
                   Real<span className="text-[#FF4C00]">Nest</span>
                 </span>
                 <span className="text-[10px] font-semibold tracking-wider uppercase text-[#FF4C00]">
-                  Control Panel
+                  Dashboard
                 </span>
               </div>
             </Link>
