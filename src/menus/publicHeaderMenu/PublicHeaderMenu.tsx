@@ -228,12 +228,21 @@ export default function PublicHeaderMenu() {
               )}
             </SkeletonTheme>
 
-            <Link
-              href="/list-property"
-              className={`hidden md:flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white no-underline rounded-lg cursor-pointer whitespace-nowrap shrink-0 transition-all duration-200 hover:-translate-y-0.5 ${styles.ctaButton}`}
-            >
-              View All Property
-            </Link>
+            {isAdminOrStaff ? (
+              <Link
+                href="/projects"
+                className={`hidden md:flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white no-underline rounded-lg cursor-pointer whitespace-nowrap shrink-0 transition-all duration-200 hover:-translate-y-0.5 ${styles.ctaButton}`}
+              >
+                View All Property
+              </Link>
+            ) : (
+              <Link
+                href="/flats"
+                className={`hidden md:flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white no-underline rounded-lg cursor-pointer whitespace-nowrap shrink-0 transition-all duration-200 hover:-translate-y-0.5 ${styles.ctaButton}`}
+              >
+                View All Flats
+              </Link>
+            )}
 
             {/* Burger button */}
             <button
@@ -259,8 +268,12 @@ export default function PublicHeaderMenu() {
       <div
         className={`${styles.mobileDrawer} ${mobileOpen ? styles.mobileDrawerOpen : ""}`}
       >
-        <div className="flex items-center justify-between px-5 h-16 border-b border-gray-100">
-          <Link href="/" className="flex items-center gap-2 no-underline" onClick={() => setMobileOpen(false)}>
+        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+          <Link
+            href="/"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-2 no-underline"
+          >
             <Image
               src="/logo-icon-white-bg.png"
               alt="RealNest Logo"
@@ -274,57 +287,56 @@ export default function PublicHeaderMenu() {
           </Link>
           <button
             onClick={() => setMobileOpen(false)}
-            className="flex items-center justify-center w-9 h-9 rounded-lg text-secondary text-xl bg-transparent border-none cursor-pointer hover:bg-gray-100"
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-secondary text-xl bg-transparent border-none cursor-pointer hover:bg-gray-100"
             aria-label="Close menu"
           >
             <FiX />
           </button>
         </div>
 
-        {/* Mobile User Profile Section */}
+        {/* User Mobile Info / Quick Login */}
         {authLoading ? (
-          <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-            <Skeleton circle height={40} width={40} />
-            <div className="flex-1 space-y-1">
-              <Skeleton height={14} width="65%" borderRadius={4} />
-              <Skeleton height={10} width="45%" borderRadius={4} />
-            </div>
+          <div className="px-4 py-3 border-b border-gray-100">
+            <Skeleton height={36} borderRadius={8} />
           </div>
         ) : user ? (
           <div className="p-4 border-b border-gray-100 bg-gray-50/50">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                {user.fullName.charAt(0).toUpperCase()}
+              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-base border border-primary/20 shrink-0">
+                {user.fullName ? user.fullName.charAt(0).toUpperCase() : <FiUser />}
               </div>
-              <div className="text-left truncate">
-                <p className="text-sm font-bold text-secondary truncate">{user.fullName}</p>
-                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-bold text-secondary truncate">
+                  {user.fullName || "User Account"}
+                </div>
+                <div className="text-xs text-gray-500 truncate">{user.email}</div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-4">
+            <div className="mt-3 flex items-center gap-2">
               <Link
-                href="/dashboard"
+                href={
+                  user.role === "SUPER_ADMIN" || user.role === "ADMIN"
+                    ? "/admin/dashboard"
+                    : "/my-account"
+                }
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-1.5 py-2 bg-primary text-white text-xs font-bold rounded-lg no-underline col-span-2"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-bold text-primary bg-primary/10 rounded-lg no-underline hover:bg-primary/20 transition-colors"
               >
-                <FiGrid /> Go to Dashboard
-              </Link>
-              <Link
-                href="/dashboard/my-account"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-1.5 py-2 bg-white border border-gray-200 text-xs font-semibold text-secondary rounded-lg no-underline"
-              >
-                <FiUser /> Profile
+                <FiGrid className="text-xs" />
+                {user.role === "SUPER_ADMIN" || user.role === "ADMIN"
+                  ? "Admin Panel"
+                  : "Dashboard"}
               </Link>
               <button
                 onClick={() => {
-                  setMobileOpen(false);
                   logout();
+                  setMobileOpen(false);
                   window.location.href = "/login";
                 }}
-                className="flex items-center justify-center gap-1.5 py-2 bg-red-50 text-xs font-semibold text-red-600 rounded-lg border-none cursor-pointer"
+                className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-bold text-red-600 bg-red-50 rounded-lg border-none cursor-pointer hover:bg-red-100 transition-colors"
               >
-                <FiLogOut /> Sign Out
+                <FiLogOut className="text-xs" />
+                Sign Out
               </button>
             </div>
           </div>
@@ -333,9 +345,9 @@ export default function PublicHeaderMenu() {
             <Link
               href="/login"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center w-full py-2.5 bg-gray-50 border border-gray-200 text-sm font-semibold text-secondary rounded-lg no-underline"
+              className="flex items-center justify-center w-full py-2.5 text-sm font-bold text-primary bg-primary/10 rounded-lg no-underline hover:bg-primary/20 transition-colors"
             >
-              Sign In
+              Sign In to Your Account
             </Link>
           </div>
         )}
@@ -357,13 +369,23 @@ export default function PublicHeaderMenu() {
         </ul>
 
         <div className="px-4 mt-2">
-          <Link
-            href="/list-property"
-            onClick={() => setMobileOpen(false)}
-            className={`flex items-center justify-center w-full py-3 text-sm font-semibold text-white no-underline rounded-lg ${styles.ctaButton}`}
-          >
-            View All Property
-          </Link>
+          {isAdminOrStaff ? (
+            <Link
+              href="/projects"
+              onClick={() => setMobileOpen(false)}
+              className={`flex items-center justify-center w-full py-3 text-sm font-semibold text-white no-underline rounded-lg ${styles.ctaButton}`}
+            >
+              View All Property
+            </Link>
+          ) : (
+            <Link
+              href="/flats"
+              onClick={() => setMobileOpen(false)}
+              className={`flex items-center justify-center w-full py-3 text-sm font-semibold text-white no-underline rounded-lg ${styles.ctaButton}`}
+            >
+              View All Flats
+            </Link>
+          )}
         </div>
       </div>
     </>
